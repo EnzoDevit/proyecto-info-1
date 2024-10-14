@@ -1,7 +1,7 @@
 #include "barco.h"
 
 // Agregar un barco a la lista
-Barco* agregar_barco(Barco* cabeza, int id, int x, int y) {
+Barco* agregar_barco(Barco* cabeza, int id, int x, int y){
     // Verificar que la posición esté dentro de los límites del tablero
     if (x < 0 || x >= TAM_TABLERO || y < 0 || y >= TAM_TABLERO) {
         printf("Posición fuera de los límites del tablero (%d, %d).\n", x, y);
@@ -13,9 +13,10 @@ Barco* agregar_barco(Barco* cabeza, int id, int x, int y) {
     while (actual != NULL) {
         if (actual->x == x && actual->y == y) {
             printf("Ya hay un barco en esta posición (%d, %d).\n", x, y);
-            return cabeza; // Fallo, posición ocupada
+            return NULL; // Fallo, posición ocupada, devuleve null
         }
         actual = actual->siguiente;
+        //ENVIAR AL SERVIDOR
     }
 
     // Crear un nuevo barco
@@ -26,7 +27,8 @@ Barco* agregar_barco(Barco* cabeza, int id, int x, int y) {
     nuevo_barco->siguiente = cabeza; // Agregar al inicio de la lista
 
     printf("Barco %d agregado en (%d, %d).\n", id, x, y);
-    return nuevo_barco; // Nueva cabeza de la lista
+    //ENVIAR AL SERVIDOR
+    return nuevo_barco; // Nueva cabeza de la lista, retorna el valor del nuevo barco
 }
 
 // Mostrar todos los barcos en la lista
