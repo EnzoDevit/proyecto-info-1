@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define TAM_TABLERO 8 // Tamaño del tablero
+
 typedef struct Barco {
     int id;          // Identificador del barco
     int x;          // Posición X

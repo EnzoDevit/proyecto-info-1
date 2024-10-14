@@ -7,6 +7,7 @@ int main() {
     cabeza_barcos = agregar_barco(cabeza_barcos, 1, 2, 3); // Barco 1 en (2, 3)
     cabeza_barcos = agregar_barco(cabeza_barcos, 2, 4, 5); // Barco 2 en (4, 5)
     cabeza_barcos = agregar_barco(cabeza_barcos, 3, 2, 3); // Intento de agregar barco en (2, 3) - ya ocupado
+    cabeza_barcos = agregar_barco(cabeza_barcos, 4, 8, 2); // Intento de agregar barco fuera del tablero
 
     // Mostrar barcos
     mostrar_barcos(cabeza_barcos);
@@ -16,3 +17,4 @@ int main() {
 
     return 0;
 }
+    

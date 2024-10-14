@@ -2,6 +2,12 @@
 
 // Agregar un barco a la lista
 Barco* agregar_barco(Barco* cabeza, int id, int x, int y) {
+    // Verificar que la posición esté dentro de los límites del tablero
+    if (x < 0 || x >= TAM_TABLERO || y < 0 || y >= TAM_TABLERO) {
+        printf("Posición fuera de los límites del tablero (%d, %d).\n", x, y);
+        return cabeza; // Fallo, posición fuera de límites
+    }
+
     // Verificar si la posición está ocupada
     Barco* actual = cabeza;
     while (actual != NULL) {
