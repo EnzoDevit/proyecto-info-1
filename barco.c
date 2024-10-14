@@ -41,6 +41,12 @@ void mostrar_barcos(Barco* cabeza) {
     }
 }
 
+
+
+void atacarBarco(Barco* cabeza){
+    //enviar al servidor "cabeza"
+}
+
 // Liberar la memoria de la lista de barcos
 void liberar_barcos(Barco* cabeza) {
     Barco* actual = cabeza;
