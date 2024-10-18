@@ -1,4 +1,4 @@
-#include "barco.h"
+#include "barco.h"      //COMIT 18/10
 
 Barco* obtenerBarco(int x, int y, Lista* lista){ //lista tiene que apuntar a la cabeza de la lista
     if(lista->cabeza == NULL){

@@ -32,12 +32,11 @@ Barco* agregar_barco(Barco* cabeza, int id, int x, int y){
 }
 
 
-void eliminar_barco(Barco* cabeza){
+void eliminar_barco(Barco* cabeza){ //COMIT 18/10
     if(cabeza->Out){
         cabeza = NULL; //borra el barco y libera las posiciones
         free(cabeza);
     }
-
 }
 
 // Mostrar todos los barcos en la lista
