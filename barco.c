@@ -21,7 +21,7 @@ Barco* agregar_barco(Barco* cabeza, int id, int x, int y){
 
     // Crear un nuevo barco
     Barco* nuevo_barco = (Barco*)malloc(sizeof(Barco));
-    nuevo_barco->id = id;
+    nuevo_barco->id = x*y;
     nuevo_barco->x = x;
     nuevo_barco->y = y;
     nuevo_barco->siguiente = cabeza; // Agregar al inicio de la lista
@@ -29,6 +29,15 @@ Barco* agregar_barco(Barco* cabeza, int id, int x, int y){
     printf("Barco %d agregado en (%d, %d).\n", id, x, y);
     //ENVIAR AL SERVIDOR
     return nuevo_barco; // Nueva cabeza de la lista, retorna el valor del nuevo barco
+}
+
+
+void eliminar_barco(Barco* cabeza){
+    if(cabeza->Out){
+        cabeza = NULL; //borra el barco y libera las posiciones
+        free(cabeza);
+    }
+
 }
 
 // Mostrar todos los barcos en la lista

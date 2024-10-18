@@ -10,13 +10,19 @@ typedef struct Barco {
     int id;          // Identificador del barco
     int x;          // Posición X
     int y;          // Posición Y
-    unsigned char Out; //so es 1 el barco esta vivo, si es 0 esta Out
+    unsigned char Out; //si es 0 el barco esta vivo, si es 1 esta Out
     struct Barco* siguiente; // Puntero al siguiente barco
 } Barco;
 
+typedef struct Lista{
+    Barco* cabeza;
+}Lista;
+
 // Funciones
 Barco* agregar_barco(Barco* cabeza, int id, int x, int y);
+Barco* obtenerBarco(int x, int y, Lista* lista);
 void atacarBarco(Barco* cabeza);
+void eliminar_barco(Barco* cabeza);
 void barcoOut(Barco* cabeza);
 void mostrar_barcos(Barco* cabeza);
 void liberar_barcos(Barco* cabeza);
