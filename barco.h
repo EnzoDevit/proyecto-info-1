@@ -20,9 +20,9 @@ typedef struct Lista{
 
 // Funciones
 Barco* agregar_barco(Barco* cabeza, int id, int x, int y);
-Barco* obtenerBarco(int x, int y, Lista* lista);
+Barco* obtenerBarco(int x, int y, Lista* lista); //COMIT 18/10
 void atacarBarco(Barco* cabeza);
-void eliminar_barco(Barco* cabeza);
+void eliminar_barco(Barco* cabeza);  //COMIT 18/10
 void barcoOut(Barco* cabeza);
 void mostrar_barcos(Barco* cabeza);
 void liberar_barcos(Barco* cabeza);
