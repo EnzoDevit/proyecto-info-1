@@ -10,9 +10,12 @@ int main()
     initializeWindow(game);
     
     struct BN_Board* board_ = malloc(sizeof(*board_));
-    BN_clear_board(board_);
+    
+    //BN_clear_board(board_);
 
-    BN_change_row(board_, 3, 0b00111000);
+    //BN_change_row(board_, 3, 0b00111000, BN_TYPE_SHIP);
+
+    BN_set_board(board_, 0x030C00, 0x020A00);
 
     while (game->isRunning)
     {

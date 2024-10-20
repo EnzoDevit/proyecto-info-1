@@ -7,6 +7,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 
 int initializeWindow(struct Game* game)
@@ -24,8 +25,8 @@ int initializeWindow(struct Game* game)
             SDL_WINDOW_SHOWN
         );
         if(game->win != 0)
-        {
-            game->renderer =  SDL_CreateRenderer(game->win, -1, 0); // Attached a win, -1 para que elija el driver default, 0 flags
+        {// Attached a win, -1 para que elija el driver default, 0 flags
+            game->renderer =  SDL_CreateRenderer(game->win, -1, 0); 
             if(game->renderer == 0)
             {
                 errcode = DEFAULT_ERROR;
@@ -58,6 +59,9 @@ void processInput(struct Game* game, struct BN_Board* board)
             if(event.key.keysym.sym == SDLK_q)
                 game->isRunning = 0;
             break;
+        case SDL_MOUSEBUTTONDOWN:
+            printf("%d\t%d\n", event.motion.xrel, event.motion.x);
+            break;
     
     }
 }
@@ -74,18 +78,27 @@ void render(struct Game* game, struct BN_Board* board)
 
     SDL_Rect rect ={0, 0, BN_TILE_SIZE, BN_TILE_SIZE};
     SDL_Rect dot ={0, 0, BN_DOT_SIZE, BN_DOT_SIZE};
+    SDL_Rect ship ={0, 0, BN_SHIP_SIZE, BN_SHIP_SIZE};
     
     for (int x = 0; x < BN_COLUMNS; x++)
     {
         rect.x = BN_MARGIN_SIZE +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE);
         dot.x = rect.x + BN_DOT_MARGIN_SIZE;
+        ship.x = rect.x + BN_SHIP_MARGIN_SIZE;
 
         for (int y = 0; y < BN_COLUMNS; y++)
         {
             rect.y = BN_MARGIN_SIZE +  y*(BN_MARGIN_SIZE + BN_TILE_SIZE);
 
             SDL_RenderDrawRect(game->renderer, &rect);
-            if(BN_getpos(board, x, y) == 1)
+            if(BN_getpos(board, x, y, BN_TYPE_SHIP) == 1)
+            {
+                SDL_SetRenderDrawColor(game->renderer, 255, 64, 0, 255);
+                ship.y = rect.y + BN_SHIP_MARGIN_SIZE;
+                SDL_RenderFillRect(game->renderer, &ship);
+                SDL_SetRenderDrawColor(game->renderer, 0, 255, 0, 255);
+            }
+            if(BN_getpos(board, x, y, BN_TYPE_SHOT) == 1)
             {
                 dot.y = rect.y + BN_DOT_MARGIN_SIZE;
                 SDL_RenderFillRect(game->renderer, &dot);
