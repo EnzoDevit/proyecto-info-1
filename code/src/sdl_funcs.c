@@ -6,9 +6,38 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
+#include <linux/limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 
+
+void handleMouseInput(SDL_Event event, struct BN_Board* board)
+{
+    int rx, ry;
+    rx = event.motion.x / (BN_TILE_SIZE + BN_MARGIN_SIZE);
+    ry = event.motion.y / (BN_TILE_SIZE + BN_MARGIN_SIZE);
+
+    if(
+        (rx < BN_COLUMNS)&&
+        (ry < BN_COLUMNS)&&
+        ((event.motion.x%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)&&
+        ((event.motion.y%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)
+    )
+    {
+        if(event.button.button == 3)
+        {
+            BN_setpos(board, rx, ry, BN_TYPE_SHOT, 1);
+        }
+        else if(event.button.button == 1)
+        {
+            BN_setpos(board, rx, ry, BN_TYPE_SHIP, 1);
+        }
+    }
+
+    
+
+    return;
+}
 
 int initializeWindow(struct Game* game)
 {
@@ -58,9 +87,11 @@ void processInput(struct Game* game, struct BN_Board* board)
         case SDL_KEYDOWN:
             if(event.key.keysym.sym == SDLK_q)
                 game->isRunning = 0;
+            else if(event.key.keysym.sym == SDLK_SPACE)
+                BN_set_board(board, 0, 0);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            printf("%d\t%d\n", event.motion.xrel, event.motion.x);
+            handleMouseInput(event, board);
             break;
     
     }

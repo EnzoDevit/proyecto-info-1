@@ -11,6 +11,46 @@ char BN_getpos(struct BN_Board* b_, unsigned char x, unsigned char y, unsigned c
     }
     return retval;
 }
+char BN_setpos(struct BN_Board* b_, unsigned char x, unsigned char y, unsigned char type, unsigned char _bit)
+{
+    if (_bit > 1) _bit = 1;
+
+    char retval = -1;
+
+    if ((y < 8)&&(x<8))
+    {
+        if (type == BN_TYPE_SHOT)
+        {
+            if(((b_->shot[y]&(1<<x))>>x)!=_bit)
+            {
+                retval = 1;
+                if(_bit)
+                    b_->shot[y]|=1<<x;
+                else
+                    b_->shot[y]&=~(1<<x);
+            }
+            else {
+                retval = 0;
+            }
+        } 
+        else if (type == BN_TYPE_SHIP)
+        {
+            if(((b_->ship[y]&(1<<x))>>x)!=_bit)
+            {
+                retval = 1;
+                if(_bit)
+                    b_->ship[y]|=1<<x;
+                else
+                    b_->ship[y]&=~(1<<x);
+            }
+            else {
+                retval = 0;
+            }
+        } 
+    }
+    return retval;
+}
+
 
 void BN_clear_board(struct BN_Board* b_)
 {
