@@ -1,3 +1,4 @@
+#include "server_funcs.h"
 #include "sdl_funcs.h"
 #include "BN.h"
 #include <SDL2/SDL.h>
@@ -8,7 +9,7 @@
 #include <SDL2/SDL_video.h>
 #include <linux/limits.h>
 #include <stdlib.h>
-#include <stdio.h>
+//#include <stdio.h>
 
 
 void handleMouseInput(SDL_Event event, struct BN_Board* board)
@@ -24,13 +25,20 @@ void handleMouseInput(SDL_Event event, struct BN_Board* board)
         ((event.motion.y%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)
     )
     {
-        if(event.button.button == 3)
+        switch (event.button.button) 
         {
-            BN_setpos(board, rx, ry, BN_TYPE_SHOT, 1);
-        }
-        else if(event.button.button == 1)
-        {
+        case 1:
             BN_setpos(board, rx, ry, BN_TYPE_SHIP, 1);
+            break;
+        case 2:
+            printf("%d\n", BN_checkship(board, rx, ry, 0));
+            break;
+        case 3:
+            BN_setpos(board, rx, ry, BN_TYPE_SHOT, 1);
+            break;
+        default:
+            printf("%d\n",event.button.button);
+            break;
         }
     }
 
