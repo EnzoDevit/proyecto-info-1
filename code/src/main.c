@@ -17,7 +17,7 @@ int main()
     //BN_change_row(board_, 3, 0b00111000, BN_TYPE_SHIP);
 
     BN_set_board(board_, 0x030C00, 0x020A00);
-    BN_set_board(board_self, 0, 0);
+    BN_set_board(board_self, 0x030C00, 0x020A00);
 
     while (game->isRunning)
     {

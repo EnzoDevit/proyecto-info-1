@@ -28,6 +28,7 @@
 #define BN_GREEN 0, 255, 0, 255
 #define BN_RED 255, 64, 0, 255
 #define BN_BLUE 64, 64, 255, 255
+#define BN_DGRAY 80, 80, 80, 255
 #define BN_GRAY 180, 180, 180, 255
 
 
