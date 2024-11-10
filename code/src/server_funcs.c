@@ -1,4 +1,5 @@
 #include "BN.h"
+#include <inttypes.h>
 
 // 1: arriba
 // 2: abajo
@@ -23,4 +24,11 @@ int BN_checkship(struct BN_Board * board, unsigned char xpos, unsigned char ypos
         }
     }
     return retval;
+}
+
+int BN_checkAllShipsDown(struct BN_Board * board)
+{
+    uint64_t shot = *((uint64_t*) (board->shot));
+    uint64_t ship = *((uint64_t*) board->ship);
+    return  (ship & (~shot))?0:1;
 }

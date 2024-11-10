@@ -32,6 +32,7 @@ void handleMouseInput(SDL_Event event, struct BN_Board* board)
             break;
         case 2:
             printf("%d\n", BN_checkship(board, rx, ry, 0));
+            printf("%d\n", BN_checkAllShipsDown(board));
             break;
         case 3:
             BN_setpos(board, rx, ry, BN_TYPE_SHOT, 1);
@@ -57,7 +58,7 @@ int initializeWindow(struct Game* game)
             "Game",
             SDL_WINDOWPOS_CENTERED, // La libreria se fija para centrarlo 
             SDL_WINDOWPOS_CENTERED,
-            BN_WINDOW_SIZE,
+            BN_WINDOW_SIZE * 2 + BN_BIG_MARGIN_SIZE,
             BN_WINDOW_SIZE,
             SDL_WINDOW_SHOWN
         );
@@ -81,7 +82,7 @@ int initializeWindow(struct Game* game)
     return errcode;
 }
 
-void processInput(struct Game* game, struct BN_Board* board)
+void processInput(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
 {
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -104,16 +105,16 @@ void processInput(struct Game* game, struct BN_Board* board)
     
     }
 }
-void update(struct Game* game, struct BN_Board* board)
+void update(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
 {
 
 }
-void render(struct Game* game, struct BN_Board* board)
+void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
 {
-    SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(game->renderer, BN_BLACK); // Negro
     SDL_RenderClear(game->renderer);
     
-    SDL_SetRenderDrawColor(game->renderer, 0, 255, 0, 255);
+    SDL_SetRenderDrawColor(game->renderer, BN_GRAY); 
 
     SDL_Rect rect ={0, 0, BN_TILE_SIZE, BN_TILE_SIZE};
     SDL_Rect dot ={0, 0, BN_DOT_SIZE, BN_DOT_SIZE};
@@ -132,10 +133,10 @@ void render(struct Game* game, struct BN_Board* board)
             SDL_RenderDrawRect(game->renderer, &rect);
             if(BN_getpos(board, x, y, BN_TYPE_SHIP) == 1)
             {
-                SDL_SetRenderDrawColor(game->renderer, 255, 64, 0, 255);
+                SDL_SetRenderDrawColor(game->renderer, BN_RED);
                 ship.y = rect.y + BN_SHIP_MARGIN_SIZE;
                 SDL_RenderFillRect(game->renderer, &ship);
-                SDL_SetRenderDrawColor(game->renderer, 0, 255, 0, 255);
+                SDL_SetRenderDrawColor(game->renderer, BN_GREEN);
             }
             if(BN_getpos(board, x, y, BN_TYPE_SHOT) == 1)
             {
@@ -146,6 +147,8 @@ void render(struct Game* game, struct BN_Board* board)
     }
     SDL_RenderPresent(game->renderer);
 }
+
+void SDL_DrawBoard(struct Game* game, struct BN_Board* board); // TO DO
 
 void freeGame(struct Game* game)
 {
