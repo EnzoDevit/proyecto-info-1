@@ -114,41 +114,68 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
     SDL_SetRenderDrawColor(game->renderer, BN_BLACK); // Negro
     SDL_RenderClear(game->renderer);
     
-    SDL_SetRenderDrawColor(game->renderer, BN_GRAY); 
+
+    SDL_Rect spacer ={BN_WINDOW_SIZE, 0, BN_BIG_MARGIN_SIZE, BN_WINDOW_SIZE};
+
+    SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
+    SDL_RenderFillRect(game->renderer, &spacer);    
 
     SDL_Rect rect ={0, 0, BN_TILE_SIZE, BN_TILE_SIZE};
     SDL_Rect dot ={0, 0, BN_DOT_SIZE, BN_DOT_SIZE};
     SDL_Rect ship ={0, 0, BN_SHIP_SIZE, BN_SHIP_SIZE};
     
-    for (int x = 0; x < BN_COLUMNS; x++)
-    {
-        rect.x = BN_MARGIN_SIZE +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE);
-        dot.x = rect.x + BN_DOT_MARGIN_SIZE;
-        ship.x = rect.x + BN_SHIP_MARGIN_SIZE;
 
-        for (int y = 0; y < BN_COLUMNS; y++)
+
+    for (int y = 0; y < BN_COLUMNS; y++)
+    {
+        rect.y = BN_MARGIN_SIZE +  y*(BN_MARGIN_SIZE + BN_TILE_SIZE);
+        ship.y = rect.y + BN_SHIP_MARGIN_SIZE;
+        dot.y = rect.y + BN_DOT_MARGIN_SIZE;
+
+        for (int x = 0; x < BN_COLUMNS; x++)
         {
-            rect.y = BN_MARGIN_SIZE +  y*(BN_MARGIN_SIZE + BN_TILE_SIZE);
+            rect.x = BN_MARGIN_SIZE +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE);
 
             SDL_RenderDrawRect(game->renderer, &rect);
             if(BN_getpos(board, x, y, BN_TYPE_SHIP) == 1)
             {
+                ship.x = rect.x + BN_SHIP_MARGIN_SIZE;
                 SDL_SetRenderDrawColor(game->renderer, BN_RED);
-                ship.y = rect.y + BN_SHIP_MARGIN_SIZE;
                 SDL_RenderFillRect(game->renderer, &ship);
-                SDL_SetRenderDrawColor(game->renderer, BN_GREEN);
+                SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
             if(BN_getpos(board, x, y, BN_TYPE_SHOT) == 1)
             {
-                dot.y = rect.y + BN_DOT_MARGIN_SIZE;
+                dot.x = rect.x + BN_DOT_MARGIN_SIZE;
+                SDL_SetRenderDrawColor(game->renderer, BN_GREEN);
                 SDL_RenderFillRect(game->renderer, &dot);
+                SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
         }
+        for (int x = 0; x < BN_COLUMNS; x++)
+        {
+            rect.x = BN_WINDOW_SIZE + BN_BIG_MARGIN_SIZE + BN_MARGIN_SIZE +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE);
+
+            SDL_RenderDrawRect(game->renderer, &rect);
+            if(BN_getpos(board_self, x, y, BN_TYPE_SHIP) == 1)
+            {
+                ship.x = rect.x + BN_SHIP_MARGIN_SIZE;
+                SDL_SetRenderDrawColor(game->renderer, BN_BLUE);
+                SDL_RenderFillRect(game->renderer, &ship);
+                SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
+            }
+            if(BN_getpos(board_self, x, y, BN_TYPE_SHOT) == 1)
+            {
+                dot.x = rect.x + BN_DOT_MARGIN_SIZE;
+                SDL_SetRenderDrawColor(game->renderer, BN_RED);
+                SDL_RenderFillRect(game->renderer, &dot);
+                SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
+            }
+        }
+        
     }
     SDL_RenderPresent(game->renderer);
 }
-
-void SDL_DrawBoard(struct Game* game, struct BN_Board* board); // TO DO
 
 void freeGame(struct Game* game)
 {
