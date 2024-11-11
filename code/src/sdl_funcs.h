@@ -37,14 +37,18 @@ struct Game
     SDL_Window * win;
     SDL_Renderer * renderer;
     unsigned int isRunning:1;
+    unsigned int isTurn:1;
+    unsigned int isWon:1;
 };
 
 int initializeWindow(struct Game*);
 
+void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board);
 void processInput(struct Game*, struct BN_Board*, struct BN_Board* self);
 void update(struct Game*, struct BN_Board*, struct BN_Board* self);
 void render(struct Game*, struct BN_Board*, struct BN_Board* self);
 
+void endGame(struct Game* game);
 void freeGame(struct Game*);
 
 #endif

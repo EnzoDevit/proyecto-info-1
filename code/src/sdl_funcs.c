@@ -1,4 +1,5 @@
 #include "server_funcs.h"
+#include "client_funcs.h"
 #include "sdl_funcs.h"
 #include "BN.h"
 #include <SDL2/SDL.h>
@@ -7,12 +8,13 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
+#include <stdio.h>
 #include <linux/limits.h>
 #include <stdlib.h>
 //#include <stdio.h>
 
 
-void handleMouseInput(SDL_Event event, struct BN_Board* board)
+void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board)
 {
     int rx, ry;
     rx = event.motion.x / (BN_TILE_SIZE + BN_MARGIN_SIZE);
@@ -28,23 +30,22 @@ void handleMouseInput(SDL_Event event, struct BN_Board* board)
         switch (event.button.button) 
         {
         case 1:
-            BN_setpos(board, rx, ry, BN_TYPE_SHIP, 1);
+            if(!BN_getpos(board, rx, ry, BN_TYPE_SHOT))
+            {
+                BN_processResponse(game, board, rx, ry, BN_answerShot(board, rx,ry));
+            }
+            // TO-DO enviar_disparo(rx, ry)
             break;
         case 2:
             printf("%d\n", BN_checkship(board, rx, ry, 0));
             printf("%d\n", BN_checkAllShipsDown(board));
             break;
-        case 3:
-            BN_setpos(board, rx, ry, BN_TYPE_SHOT, 1);
-            break;
         default:
-            printf("%d\n",event.button.button);
+            
             break;
         }
     }
-
     
-
     return;
 }
 
@@ -52,6 +53,7 @@ int initializeWindow(struct Game* game)
 {
     int errcode = SDL_Init(SDL_INIT_EVERYTHING);
     game->isRunning = 1;
+    game->isTurn = 1;
     if(errcode == 0)
     {
         game->win = SDL_CreateWindow( //Creando el "objeto" (como puntero a struct) de la ventana
@@ -98,9 +100,12 @@ void processInput(struct Game* game, struct BN_Board* board, struct BN_Board* bo
                 game->isRunning = 0;
             else if(event.key.keysym.sym == SDLK_SPACE)
                 BN_set_board(board, 0, 0);
+            else if(event.key.keysym.sym == SDLK_w)
+                BN_print_board(board);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            handleMouseInput(event, board);
+            if(game->isTurn)
+                handleMouseInput(game, event, board);
             break;
     
     }
@@ -183,4 +188,12 @@ void freeGame(struct Game* game)
     SDL_DestroyWindow(game->win);
     SDL_Quit(); // Cierra SDL
     free(game);
+}
+
+void endGame(struct Game* game)
+{
+    if(game->isWon)
+        printf("Ganaste el Juego!\n");
+    else
+        printf("Perdiste el juego...\n"); 
 }

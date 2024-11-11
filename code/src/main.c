@@ -26,6 +26,8 @@ int main()
         render(game, board_, board_self);
     }
     
+    endGame(game);
+    
     freeGame(game);
     return 0;
 }
