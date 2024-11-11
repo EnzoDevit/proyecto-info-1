@@ -57,7 +57,7 @@ int initializeWindow(struct Game* game)
     if(errcode == 0)
     {
         game->win = SDL_CreateWindow( //Creando el "objeto" (como puntero a struct) de la ventana
-            "Game",
+            "La gran naval",
             SDL_WINDOWPOS_CENTERED, // La libreria se fija para centrarlo 
             SDL_WINDOWPOS_CENTERED,
             BN_WINDOW_SIZE * 2 + BN_BIG_MARGIN_SIZE,
@@ -145,14 +145,14 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
             if(BN_getpos(board, x, y, BN_TYPE_SHIP) == 1)
             {
                 ship.x = rect.x + BN_SHIP_MARGIN_SIZE;
-                SDL_SetRenderDrawColor(game->renderer, BN_RED);
+                SDL_SetRenderDrawColor(game->renderer, BN_WHITE);
                 SDL_RenderFillRect(game->renderer, &ship);
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
             if(BN_getpos(board, x, y, BN_TYPE_SHOT) == 1)
             {
                 dot.x = rect.x + BN_DOT_MARGIN_SIZE;
-                SDL_SetRenderDrawColor(game->renderer, BN_GREEN);
+                SDL_SetRenderDrawColor(game->renderer, BN_RED);
                 SDL_RenderFillRect(game->renderer, &dot);
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
@@ -172,7 +172,7 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
             if(BN_getpos(board_self, x, y, BN_TYPE_SHOT) == 1)
             {
                 dot.x = rect.x + BN_DOT_MARGIN_SIZE;
-                SDL_SetRenderDrawColor(game->renderer, BN_RED);
+                SDL_SetRenderDrawColor(game->renderer, BN_YLW);
                 SDL_RenderFillRect(game->renderer, &dot);
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }

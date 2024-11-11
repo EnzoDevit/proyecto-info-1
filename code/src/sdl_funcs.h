@@ -27,9 +27,11 @@
 #define BN_BLACK 0, 0, 0, 255
 #define BN_GREEN 0, 255, 0, 255
 #define BN_RED 255, 64, 0, 255
-#define BN_BLUE 64, 64, 255, 255
+#define BN_BLUE 150, 180, 255, 255
 #define BN_DGRAY 80, 80, 80, 255
 #define BN_GRAY 180, 180, 180, 255
+#define BN_YLW 255, 130, 30, 255
+#define BN_WHITE 255, 255, 255, 255
 
 
 struct Game
