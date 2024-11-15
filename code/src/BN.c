@@ -1,5 +1,6 @@
 #include "BN.h"
 #include <SDL2/SDL_mouse.h>
+#include <stdio.h>
 
 char BN_getpos(struct BN_Board* b_, unsigned char x, unsigned char y, unsigned char type)
 {
@@ -69,6 +70,15 @@ void BN_set_board(struct BN_Board* b_, Uint64 shot_, Uint64 ship_)
         Uint64* ptr = ((Uint64*)b_);
         *ptr = shot_;
         *(ptr+1) = ship_;
+    }
+}
+
+void BN_print_board(struct BN_Board* b_)
+{
+    if (b_)
+    {
+        Uint64* ptr = ((Uint64*)b_);
+        printf("%lx\n", *(ptr+1));
     }
 }
 
