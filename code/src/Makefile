@@ -1,6 +1,10 @@
 main = BN.o client_funcs.o main.o sdl_funcs.o server_funcs.o
 
-cliente = BN.o client_funcs.o client.o sdl_funcs.o
+#cliente = BN.o client_funcs.o client.o sdl_funcs.o
+
+server =  sock-lib.o mainServer.o
+
+cliente =  sock-lib.o mainCliente.o
 
 Cflags = -Wall -lSDL2
 
@@ -8,6 +12,13 @@ CC = gcc
 
 main: $(main)
 	$(CC) $< $(Cflags) -o $@
+
+main: $(server)
+	$(CC) $< $(Cflags) -o $@
+
+main: $(cliente)
+	$(CC) $< $(Cflags) -o $@
+
 cliente: $(cliente)
 	$(CC) $< $(Cflags) -o $@
 
