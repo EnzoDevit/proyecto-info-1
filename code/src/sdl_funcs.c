@@ -157,6 +157,7 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
         }
+        
         for (int x = 0; x < BN_COLUMNS; x++)
         {
             rect.x = BN_WINDOW_SIZE + BN_BIG_MARGIN_SIZE + BN_MARGIN_SIZE +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE);
