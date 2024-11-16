@@ -26,7 +26,7 @@ int BN_checkship(struct BN_Board * board, unsigned char xpos, unsigned char ypos
     return retval;
 }
 
-int BN_checkAllShipsDown(struct BN_Board * board)
+int BN_checkAllShipsDown(struct BN_Board * board)//te fijas si a cada barco le pegaste un tiro
 {
     uint64_t shot = *((uint64_t*) (board->shot));
     uint64_t ship = *((uint64_t*) board->ship);
