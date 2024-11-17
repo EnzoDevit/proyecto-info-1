@@ -22,8 +22,6 @@ int main(int argc , char** argv) {
 
     write(cliente_fd, &tipo_solicitado, sizeof(int));
 
-    recibir_respuesta(cliente_fd);
-
     close(cliente_fd);
     return 0;
 }
