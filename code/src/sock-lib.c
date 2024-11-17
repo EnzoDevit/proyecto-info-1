@@ -51,7 +51,7 @@ int conectar(char *hostname, int port, int debug)
 	/* Establecemos their_addr con la direccion del server */
 	their_addr.sin_family = AF_INET;
 	their_addr.sin_port = port;
-	their_addr.sin_addr = *((struct in_addr *)he->h_addr_list);//h_addr lo cambie por h_addr_list
+	their_addr.sin_addr = *((struct in_addr *)he->h_addr);//h_addr lo cambie por h_addr_list
 	bzero(&(their_addr.sin_zero), 8);
 
 	/* Intentamos conectarnos con el servidor */

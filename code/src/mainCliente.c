@@ -9,11 +9,10 @@
 #define PORT 8000
 #define IP_SERVER "127.0.0.1"
 
-int main(int argc , char** argv) {
-
-
+int main(){
 
     int cliente_fd = conectar(IP_SERVER, PORT, 1);
+    printf("xd\n");
     if (cliente_fd <= 0){
         perror("Error al conectar con el servidor");
         exit(EXIT_FAILURE);
