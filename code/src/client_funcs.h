@@ -1,4 +1,12 @@
 #include "BN.h"
 #include "sdl_funcs.h"
 
-void BN_processResponse(struct Game* game, struct BN_Board* board, unsigned char x, unsigned char y, int response);
+typedef struct client_data{
+    int sock_descriptor;
+    Game* game;
+    BN_Board* board1;
+    BN_Board* board2;
+    msg_pack* msg;
+}client_data;
+
+void BN_processResponse(Game* game, BN_Board* board, msg_pack);

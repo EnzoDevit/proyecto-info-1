@@ -34,14 +34,14 @@
 #define BN_WHITE 255, 255, 255, 255
 
 
-struct Game
+typedef struct Game
 {
     SDL_Window * win;
     SDL_Renderer * renderer;
     unsigned int isRunning:1;
     unsigned int isTurn:1;
     unsigned int isWon:1;
-};
+} Game;
 
 int initializeWindow(struct Game*);
 

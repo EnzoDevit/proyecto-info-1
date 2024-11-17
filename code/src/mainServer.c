@@ -3,12 +3,14 @@
 #include <string.h>
 #include <unistd.h>
 #include "sock-lib.h"
+#include <time.h>
 
 #define PORT 8000
 
 
 int main(){
 
+    srand(time(NULL));
     int servidor_fd = abrir_conexion(PORT, 10, 1);
     if (servidor_fd < 0) {
         perror("Error al abrir conexión");

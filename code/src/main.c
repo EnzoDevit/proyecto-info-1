@@ -27,7 +27,7 @@ int main()
     }
 
     endGame(game);
-    
     freeGame(game);
+
     return 0;
 }

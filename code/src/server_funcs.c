@@ -1,5 +1,9 @@
 #include "BN.h"
-#include <inttypes.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <unistd.h>
+#include <SDL2/SDL_stdinc.h>
 
 // 1: arriba
 // 2: abajo
@@ -46,4 +50,57 @@ int BN_answerShot(struct BN_Board * board, unsigned char xpos, unsigned char ypo
     }
 
     return retval;
+}
+
+
+
+void* serverLoop(void* data)
+{
+    BN_Board* boards = malloc(2*sizeof(BN_Board));
+    uint64_t states[] = BN_PRESAVED_STATES;
+    BN_set_board(boards, 0, rand()%7) ;
+    BN_set_board(boards+1, 0, rand()%7) ;
+
+    int* sd = (int*) data;
+
+    write(*(sd), (void*)(boards), sizeof(BN_Board));
+    write(*(sd+1), (void*)(boards+1), sizeof(BN_Board));
+    
+    int aux = 0;
+    char running = 1;
+    char turn = 0;
+
+    msg_pack* msg = malloc(sizeof(msg_pack));
+    // mensage a enviar
+    msg_pack* msg_s = malloc(sizeof(msg_pack));
+
+    *(unsigned char*)msg = 0;
+    *(unsigned char*)msg_s = 0;
+
+
+
+    write(*(sd), (void*)(&msg_s), sizeof(msg_pack));
+
+    while (running) {
+
+        read(*(sd + turn),  (void*)(msg), sizeof(msg_pack));
+
+        if(msg->type != BN_MSGTYPE_ACTION) break;
+        
+        *(unsigned char*)msg_s = 0;
+        // establecemos la convencion de mandar las respuesteas en el x
+        msg_s->x = BN_answerShot(boards + ((turn + 1)%2),msg->x,msg->y);
+        
+        if( msg_s->x== BN_STATUS_GAMEWON) 
+        {
+            msg_s->type = BN_MSGTYPE_GAMEENDED;
+            msg->type = BN_MSGTYPE_GAMEENDED;
+        }
+        
+        write(*(sd + turn),           (void*)(msg_s), sizeof(msg_pack));
+        write(*(sd + ((turn + 1)%2)), (void*)(msg)  , sizeof(msg_pack));
+
+
+        turn = (turn + 1)%2;
+    }
 }

@@ -32,7 +32,7 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
         case 1:
             if(!BN_getpos(board, rx, ry, BN_TYPE_SHOT))
             {
-                BN_processResponse(game, board, rx, ry, BN_answerShot(board, rx,ry));
+                // BN_processResponse(game, board, rx, ry, BN_answerShot(board, rx,ry));
             }
             // TO-DO enviar_disparo(rx, ry)
             break;
@@ -53,7 +53,8 @@ int initializeWindow(struct Game* game)
 {
     int errcode = SDL_Init(SDL_INIT_EVERYTHING);
     game->isRunning = 1;
-    game->isTurn = 1;
+    game->isTurn = 0;
+    game->isWon = 0;
     if(errcode == 0)
     {
         game->win = SDL_CreateWindow( //Creando el "objeto" (como puntero a struct) de la ventana
