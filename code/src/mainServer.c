@@ -54,8 +54,6 @@ int main(){
                     }  
             }
 
-            *nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
-
                 if (*nuevo_cliente_fd_2 <= 0){
                     perror("Error al aceptar conexión del cliente 2");
                     *nuevo_cliente_fd_2 = NULL_I;
