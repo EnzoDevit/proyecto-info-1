@@ -20,10 +20,10 @@ int main(int argc , char** argv) {
 
     struct BN_Board* board;
 
-    read(cliente_fd, board, sizeof(board));
+    write(cliente_fd, &tipo_solicitado, sizeof(int));
 
-    //
-    
+    recibir_respuesta(cliente_fd);
+
     close(cliente_fd);
     return 0;
 }
