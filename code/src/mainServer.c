@@ -26,20 +26,20 @@ int main(){
 
         while (1){
 
-            while(*nuevo_cliente_fd < 0){
+            while(*nuevo_cliente_fd <= 0){
 
                 *nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 1);
 
-                    if (*nuevo_cliente_fd < 0){
+                    if (*nuevo_cliente_fd <= 0){
                         perror("Error al aceptar conexión del cliente 1");
                         *nuevo_cliente_fd = NULL;
                     }
             }
 
-            while(*nuevo_cliente_fd_2 < 0){
+            while(*nuevo_cliente_fd_2 <= 0){
                 *nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
 
-                    if (*nuevo_cliente_fd_2 < 0){
+                    if (*nuevo_cliente_fd_2 <= 0){
                         perror("Error al aceptar conexión del cliente 2");
                         *nuevo_cliente_fd_2 = NULL;
                     }  
@@ -47,7 +47,7 @@ int main(){
 
             *nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
 
-                if (*nuevo_cliente_fd_2 < 0){
+                if (*nuevo_cliente_fd_2 <= 0){
                     perror("Error al aceptar conexión del cliente 2");
                     *nuevo_cliente_fd_2 = NULL;
                 }
