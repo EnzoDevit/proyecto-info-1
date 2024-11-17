@@ -9,6 +9,8 @@ int main()
 
     initializeWindow(game);
     
+
+    
     struct BN_Board* board_ = malloc(sizeof(*board_));
     struct BN_Board* board_self = malloc(sizeof(*board_self));
     

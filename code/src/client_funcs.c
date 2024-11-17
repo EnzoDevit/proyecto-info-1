@@ -2,14 +2,16 @@
 
 #include <unistd.h>
 
-void BN_processResponse(Game* game, BN_Board* board, msg_pack msg)
+
+// Cliente ejecuta  el mensage que le devuelve el serveral disparar
+void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned char y, unsigned char statustype)
 {
       
-    if(msg.type != BN_STATUS_NOHIT)
+    if(statustype != BN_STATUS_NOHIT)
     {
-        BN_setpos(board, msg.x, msg.y, BN_TYPE_SHOT, 1);
+        BN_setpos(board, x, y, BN_TYPE_SHOT, 1);
         // TODO al tirar un barco if (response == BN_STATUS_SHIPDOWN) {}
-        if (msg.type == BN_STATUS_GAMEWON)
+        if (statustype == BN_STATUS_GAMEWON)
         {
             game->isRunning = 0;
             game->isWon = 1;
@@ -31,7 +33,7 @@ void* clientLoop(void* data)
     msg_pack* msg = malloc(sizeof(msg_pack));// mensage a recivir
     *(unsigned char*)msg = 0;
     
-    msg_pack* msg_s = ((client_data*)data)->msg;
+    msg_pack* msg_s = game->msg;
     
     char running = 1;
 
@@ -49,26 +51,28 @@ void* clientLoop(void* data)
         game->isTurn = 1;
 
         while (game->isTurn);
-
-
-
+        
+        pthread_mutex_lock(&(game->msgmutex));
         write(sd,  (void*)(msg_s), sizeof(msg_pack));
+        pthread_mutex_unlock(&(game->msgmutex));
 
         read(sd, (void*)(msg), sizeof(msg_pack));
         
-        BN_processResponse(game, boards+1, *msg);
+        BN_processResponse(game, boards+1, msg_s->x, msg_s->y, msg->x);
         
         if(msg->type == BN_MSGTYPE_GAMEENDED)
         {
             running = 0;
+            game->isWon = 1;
         }
         else 
         {
             read(sd, (void*)(msg)  , sizeof(msg_pack));
             BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
             if(msg->type == BN_MSGTYPE_GAMEENDED){
-                    running = 0;
+                running = 0;
             }
         }
     }
+    return 0;
 }

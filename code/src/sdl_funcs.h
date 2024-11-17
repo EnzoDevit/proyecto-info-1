@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_shape.h>
 #include <SDL2/SDL_video.h>
+#include <pthread.h>
 #include "BN.h"
 
 #define DEFAULT_ERROR -1
@@ -41,6 +42,8 @@ typedef struct Game
     unsigned int isRunning:1;
     unsigned int isTurn:1;
     unsigned int isWon:1;
+    msg_pack* msg;
+    pthread_mutex_t msgmutex;
 } Game;
 
 int initializeWindow(struct Game*);

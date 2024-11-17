@@ -1,4 +1,4 @@
-#include "server_funcs.h"
+//#include "server_funcs.h"
 #include "client_funcs.h"
 #include "sdl_funcs.h"
 #include "BN.h"
@@ -8,6 +8,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <linux/limits.h>
 #include <stdlib.h>
@@ -16,7 +17,7 @@
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board)
 {
-    int rx, ry;
+    int rx, ry; // rounded x rounded y
     rx = event.motion.x / (BN_TILE_SIZE + BN_MARGIN_SIZE);
     ry = event.motion.y / (BN_TILE_SIZE + BN_MARGIN_SIZE);
 
@@ -32,14 +33,16 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
         case 1:
             if(!BN_getpos(board, rx, ry, BN_TYPE_SHOT))
             {
-                // BN_processResponse(game, board, rx, ry, BN_answerShot(board, rx,ry));
+                pthread_mutex_lock(&(game->msgmutex));
+                game->isTurn = 0;
+                game->msg->type = BN_MSGTYPE_ACTION;
+                game->msg->x = rx;
+                game->msg->y = ry;
+                pthread_mutex_unlock(&(game->msgmutex));
             }
             // TO-DO enviar_disparo(rx, ry)
             break;
-        case 2:
-            printf("%d\n", BN_checkship(board, rx, ry, 0));
-            printf("%d\n", BN_checkAllShipsDown(board));
-            break;
+
         default:
             
             break;
@@ -55,6 +58,7 @@ int initializeWindow(struct Game* game)
     game->isRunning = 1;
     game->isTurn = 0;
     game->isWon = 0;
+    pthread_mutex_init(&(game->msgmutex), NULL);
     if(errcode == 0)
     {
         game->win = SDL_CreateWindow( //Creando el "objeto" (como puntero a struct) de la ventana

@@ -1,10 +1,12 @@
-main = BN.o client_funcs.o main.o sdl_funcs.o server_funcs.o
+libs = BN.o client_funcs.o sdl_funcs.o server_funcs.o sock-lib.o
 
-server =  sock-lib.o mainServer.o
+main = $(libs) main.o
 
-cliente =  sock-lib.o mainCliente.o
+server =  $(libs) mainServer.o 
 
-Cflags = -Wall -lSDL2
+cliente = $(libs) main.o 
+
+Cflags = -Wall -lSDL2 -lpthread
 
 CC = gcc
 

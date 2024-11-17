@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <time.h>
 #include <unistd.h>
 #include <SDL2/SDL_stdinc.h>
 
@@ -39,6 +40,7 @@ int BN_checkAllShipsDown(struct BN_Board * board)//te fijas si a cada barco le p
     return  (ship & (~shot))?0:1;
 }
 
+// Toma el mensage de disparo y lo ejeduta en el server 
 int BN_answerShot(struct BN_Board * board, unsigned char xpos, unsigned char ypos)
 {
     BN_setpos(board, xpos, ypos, BN_TYPE_SHOT, 1);
@@ -70,8 +72,9 @@ void* serverLoop(void* data)
 {
     BN_Board* boards = malloc(2*sizeof(BN_Board));
     uint64_t states[] = BN_PRESAVED_STATES;
-    BN_set_board(boards, 0, rand()%7) ;
-    BN_set_board(boards+1, 0, rand()%7) ;
+    BN_set_board(boards, 0, states[rand()%7]) ;
+    BN_set_board(boards+1, 0, states[rand()%7]) ;
+
 
     int* sd = (int*) data;
 
@@ -101,6 +104,7 @@ void* serverLoop(void* data)
         
         *(unsigned char*)msg_s = 0;
         // establecemos la convencion de mandar las respuesteas en el x
+        msg_s->type = 0;
         msg_s->x = BN_answerShot(boards + ((turn + 1)%2),msg->x,msg->y);
         
         if( msg_s->x== BN_STATUS_GAMEWON) 
@@ -115,4 +119,5 @@ void* serverLoop(void* data)
 
         turn = (turn + 1)%2;
     }
+    return NULL;
 }
