@@ -7,10 +7,10 @@
 // Cliente ejecuta  el mensage que le devuelve el serveral disparar
 void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned char y, unsigned char statustype)
 {
-      
+    BN_setpos(board, x, y, BN_TYPE_SHOT, 1);
     if(statustype != BN_STATUS_NOHIT)
     {
-        BN_setpos(board, x, y, BN_TYPE_SHOT, 1);
+        BN_setpos(board, x, y, BN_TYPE_SHIP, 1);
         // TODO al tirar un barco if (response == BN_STATUS_SHIPDOWN) {}
         if (statustype == BN_STATUS_GAMEWON)
         {
