@@ -30,8 +30,8 @@ void* clientLoop(void* data)
 
     BN_clear_board(boards + 1);
 
-    msg_pack* msg = malloc(sizeof(msg_pack));// mensage a recivir
-    *(unsigned char*)msg = 0;
+    msg_pack* msg = malloc(sizeof(msg_pack));// mensage a recibir
+    *(unsigned char*)msg = 0;//pone las 3 variables en 0
     
     msg_pack* msg_s = game->msg;
     

@@ -24,7 +24,7 @@ typedef struct BN_Board
 #define BN_MSGTYPE_GAMESTARTED 1
 #define BN_MSGTYPE_GAMEENDED 2
 
-typedef struct msg_pack
+typedef struct msg_pack //campo de bits, 2 bits de type, 3 de x y 3 de type
 {
     unsigned char type:2;
     unsigned char x:3;
