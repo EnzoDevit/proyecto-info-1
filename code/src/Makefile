@@ -4,7 +4,7 @@ main = $(libs) main.o
 
 server =  $(libs) mainServer.o 
 
-cliente = $(libs) main.o 
+cliente = $(libs) mainCliente.o 
 
 Cflags = -Wall -lSDL2 -lpthread
 

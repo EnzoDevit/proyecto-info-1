@@ -24,11 +24,18 @@ int main(){
     int *nuevo_cliente_fd = malloc(sizeof(int));
     int *nuevo_cliente_fd_2 = malloc(sizeof(int));
 
+    printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
+
+    *nuevo_cliente_fd = 0;
+    *nuevo_cliente_fd_2 = 0;
+
         while (1){
 
-            while(*nuevo_cliente_fd <= 0){
+            while((*nuevo_cliente_fd) <= 0){
+                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
 
                 *nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 1);
+                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
 
                     if (*nuevo_cliente_fd <= 0){
                         perror("Error al aceptar conexión del cliente 1");
@@ -37,7 +44,9 @@ int main(){
             }
 
             while(*nuevo_cliente_fd_2 <= 0){
+                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
                 *nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
+                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
 
                     if (*nuevo_cliente_fd_2 <= 0){
                         perror("Error al aceptar conexión del cliente 2");
@@ -67,9 +76,10 @@ int main(){
                     
                     pthread_t hilo;
                     pthread_create(&hilo, NULL, serverLoop, sumaClientes);
+                    pthread_detach(hilo);
 
-
-                    //pthread_detach(hilo);
+                    *nuevo_cliente_fd = 0;
+                    *nuevo_cliente_fd_2 = 0;
                 }
 
 
