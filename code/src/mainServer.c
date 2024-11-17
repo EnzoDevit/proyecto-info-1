@@ -1,3 +1,4 @@
+#include "server_funcs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,7 +20,7 @@ int main(){
 
 
 
-    while (1) {
+    while (1){
         int *nuevo_cliente_fd = malloc(sizeof(int));
         *nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 1);
             if (*nuevo_cliente_fd < 0){
@@ -27,5 +28,9 @@ int main(){
                 free(nuevo_cliente_fd);
                 continue;
             }
+
+        
+
+        
     }
 }
