@@ -70,8 +70,8 @@ void* serverLoop(void* data)
 {
     BN_Board* boards = malloc(2*sizeof(BN_Board));
     uint64_t states[] = BN_PRESAVED_STATES;
-    BN_set_board(boards, 0, rand()%7) ;
-    BN_set_board(boards+1, 0, rand()%7) ;
+    BN_set_board(boards, 0, rand()%9);
+    BN_set_board(boards+1, 0, rand()%9);
 
     int* sd = (int*) data;
 

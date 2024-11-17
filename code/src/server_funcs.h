@@ -11,3 +11,4 @@ int BN_checkship(struct BN_Board *, unsigned char x, unsigned char y, unsigned c
 int BN_checkAllShipsDown(struct BN_Board *);
 int BN_answerShot(struct BN_Board *, unsigned char x, unsigned char y);
 void manejar_signal(int signo);
+void* serverLoop(void* data);
