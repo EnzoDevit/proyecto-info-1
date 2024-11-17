@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "sock-lib.h"
+#include "server_funcs.h"
 
 #define PORT 8000
 
@@ -17,7 +13,7 @@ int main(){
 
 
 
-    while (1) {
+    while (1){
         int *nuevo_cliente_fd = malloc(sizeof(int));
         *nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 1);
             if (*nuevo_cliente_fd < 0){
@@ -25,5 +21,9 @@ int main(){
                 free(nuevo_cliente_fd);
                 continue;
             }
+
+        
+
+        
     }
 }

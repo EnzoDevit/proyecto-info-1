@@ -1,5 +1,6 @@
 #include "BN.h"
 #include <inttypes.h>
+#include "server_funcs.h"
 
 // 1: arriba
 // 2: abajo
@@ -41,9 +42,19 @@ int BN_answerShot(struct BN_Board * board, unsigned char xpos, unsigned char ypo
     if(BN_getpos(board, xpos, ypos, BN_TYPE_SHIP))
     {
         retval = BN_STATUS_HIT;
-        if (BN_checkAllShipsDown(board) ) retval = BN_STATUS_GAMEWON;
+        if (BN_checkAllShipsDown(board)) retval = BN_STATUS_GAMEWON;
         else if (BN_checkship(board, xpos, ypos,0))  retval = BN_STATUS_SHIPDOWN;
     }
 
     return retval;
+}
+
+
+
+void manejar_signal(int signo){
+    if (signo == SIGUSR1) {
+        //algo
+    } else if (signo == SIGUSR2){
+        //algo
+    }
 }
