@@ -1,5 +1,6 @@
 #include "client_funcs.h"
 
+#include <stdio.h>
 #include <unistd.h>
 
 
@@ -23,6 +24,7 @@ void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned c
 // Hay que reservar previamente los componentes de data
 void* clientLoop(void* data)
 {
+    printf("comienza");
     int sd = ((client_data*)data)->sock_descriptor;
     Game* game = ((client_data*)data)->game;
 
@@ -38,9 +40,9 @@ void* clientLoop(void* data)
     char running = 1;
 
     read(sd, (void*)(boards), sizeof(BN_Board));
-
+    printf("llega");
     read((sd), (void*)(&msg), sizeof(msg_pack));
-
+    printf("%d, %d, %d\n", msg->type, msg->x, msg->y);
     if(msg->type == BN_MSGTYPE_ACTION) 
     {
         BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);

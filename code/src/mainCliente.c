@@ -12,12 +12,13 @@
 int main(){
 
     int cliente_fd = conectar(IP_SERVER, PORT, 1);
-    printf("xd\n");
+
     if (cliente_fd <= 0){
         perror("Error al conectar con el servidor");
         exit(EXIT_FAILURE);
     }
-        struct Game* game = malloc(sizeof(struct Game));
+    
+    struct Game* game = malloc(sizeof(struct Game));
 
     initializeWindow(game);
     
@@ -36,6 +37,7 @@ int main(){
     pthread_t hilo;
 
     pthread_create(&hilo, NULL, clientLoop, &data);
+    pthread_detach(hilo);
 
     while (game->isRunning)
     {

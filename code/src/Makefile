@@ -10,6 +10,8 @@ Cflags = -Wall -lSDL2 -lpthread
 
 CC = gcc
 
+all: server cliente
+
 main: $(main)
 	$(CC) $(main) $(Cflags) -o $@
 

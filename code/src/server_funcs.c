@@ -3,7 +3,6 @@
 #include "server_funcs.h"
 #include <stdint.h>
 #include <stdlib.h>
-
 #include <time.h>
 #include <unistd.h>
 #include <SDL2/SDL_stdinc.h>
@@ -70,6 +69,7 @@ void manejar_signal(int signo){
 
 void* serverLoop(void* data)
 {
+    printf("lanzado");
     BN_Board* boards = malloc(2*sizeof(BN_Board));
     uint64_t states[] = BN_PRESAVED_STATES;
     BN_set_board(boards, 0, states[rand()%9]);

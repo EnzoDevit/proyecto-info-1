@@ -21,69 +21,48 @@ int main(){
 
     if(servidor_fd > 0){
     
-    int *nuevo_cliente_fd = malloc(sizeof(int));
-    int *nuevo_cliente_fd_2 = malloc(sizeof(int));
+    int nuevo_cliente_fd;
+    int nuevo_cliente_fd_2;
 
-    printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
-
-    *nuevo_cliente_fd = 0;
-    *nuevo_cliente_fd_2 = 0;
+    
+    nuevo_cliente_fd = 0;
+    nuevo_cliente_fd_2 = 0;
 
         while (1){
 
-            while((*nuevo_cliente_fd) <= 0){
-                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
-
-                *nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 1);
-                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
-
-                    if (*nuevo_cliente_fd <= 0){
+            while((nuevo_cliente_fd) <= 0){
+                
+                nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 1);
+                
+                    if (nuevo_cliente_fd <= 0){
                         perror("Error al aceptar conexión del cliente 1");
-                        *nuevo_cliente_fd = NULL_I;
+                        nuevo_cliente_fd = NULL_I;
                     }
             }
 
-            while(*nuevo_cliente_fd_2 <= 0){
-                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
-                *nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
-                printf("%d %d \n", *nuevo_cliente_fd, *nuevo_cliente_fd_2);
-
-                    if (*nuevo_cliente_fd_2 <= 0){
+            while(nuevo_cliente_fd_2 <= 0){
+                nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
+                
+                    if (nuevo_cliente_fd_2 <= 0){
                         perror("Error al aceptar conexión del cliente 2");
-                        *nuevo_cliente_fd_2 = NULL_I;
+                        nuevo_cliente_fd_2 = NULL_I;
                     }  
             }
 
-            *nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
+            if(nuevo_cliente_fd != NULL_I && nuevo_cliente_fd_2 != NULL_I){
+                int *sumaClientes = (int*)malloc(2*sizeof(int));
 
-                if (*nuevo_cliente_fd_2 <= 0){
-                    perror("Error al aceptar conexión del cliente 2");
-                    *nuevo_cliente_fd_2 = NULL_I;
-                }
+                *(sumaClientes) = nuevo_cliente_fd;
+                *(sumaClientes+1) = nuevo_cliente_fd_2;
+                
+                pthread_t hilo;
+                pthread_create(&hilo, NULL, serverLoop, sumaClientes);
+                pthread_detach(hilo);
 
-                if(*nuevo_cliente_fd == NULL_I){
-                    perror("Error al aceptar conexión del cliente 1");
-                }
-                else if(*nuevo_cliente_fd_2 == NULL_I){
-                    perror("Error al aceptar conexión del cliente 2");
-                }
+                nuevo_cliente_fd = 0;
+                nuevo_cliente_fd_2 = 0;
+            }
 
-                if(*nuevo_cliente_fd != NULL_I && *nuevo_cliente_fd_2 != NULL_I){
-                    int *sumaClientes = (int*)malloc(2*sizeof(int));
-
-                    *(sumaClientes) = *nuevo_cliente_fd;
-                    *(sumaClientes+1) = *nuevo_cliente_fd_2;
-                    
-                    pthread_t hilo;
-                    pthread_create(&hilo, NULL, serverLoop, sumaClientes);
-                    pthread_detach(hilo);
-
-                    *nuevo_cliente_fd = 0;
-                    *nuevo_cliente_fd_2 = 0;
-                }
-
-
-        
         }
     }
 }
