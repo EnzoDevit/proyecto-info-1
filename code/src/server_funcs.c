@@ -87,10 +87,12 @@ void* serverLoop(void* data)
 
     msg_pack* msg = malloc(sizeof(msg_pack));
     // mensage a enviar
-    msg_pack* msg_s = malloc(sizeof(msg_pack));
+    msg_pack* msg_s /*= malloc(sizeof(msg_pack))*/;
+
+    msg_pack msg_obj = {BN_MSGTYPE_GAMESTARTED, 0, 0};
 
     *(unsigned char*)msg = 0;
-    *(unsigned char*)msg_s = 0;
+    msg_s = &msg_obj;
 
     msg_s->type = BN_MSGTYPE_GAMESTARTED;
 
@@ -116,8 +118,15 @@ void* serverLoop(void* data)
         write(*(sd + turn),           (void*)(msg_s), sizeof(msg_pack));
         write(*(sd + ((turn + 1)%2)), (void*)(msg)  , sizeof(msg_pack));
 
-
-        turn = (turn + 1)%2;
+        if((msg_s->x) != BN_STATUS_NOHIT)
+        {
+            turn = (turn + 1)%2;
+        }
     }
+
+    close(*sd);
+    free(boards);
+
+
     return NULL;
 }

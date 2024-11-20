@@ -49,31 +49,44 @@ void* clientLoop(void* data)
         BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
     }
 
+    // if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP))
+    // {
+        game->isTurn = 1;
+    // }
+
     while (game->isRunning) {
 
-        game->isTurn = 1;
-
-        while (game->isTurn);
-        
-        pthread_mutex_lock(&(game->msgmutex));
-        write(sd,  (void*)(msg_s), sizeof(msg_pack));
-        pthread_mutex_unlock(&(game->msgmutex));
-
-        read(sd, (void*)(msg), sizeof(msg_pack));
-        
-        BN_processResponse(game, boards+1, msg_s->x, msg_s->y, msg->x);
-        
-        if(msg->type == BN_MSGTYPE_GAMEENDED)
+        if((game->isTurn) == 1)
         {
-            game->isRunning = 0;
-            game->isWon = 1;
+            while (game->isTurn);
+            
+            pthread_mutex_lock(&(game->msgmutex));
+            write(sd,  (void*)(msg_s), sizeof(msg_pack));
+            pthread_mutex_unlock(&(game->msgmutex));
+
+            read(sd, (void*)(msg), sizeof(msg_pack));
+            
+            BN_processResponse(game, boards+1, msg_s->x, msg_s->y, msg->x);
+            
+            if(msg->type == BN_MSGTYPE_GAMEENDED)
+            {
+                game->isRunning = 0;
+                game->isWon = 1;
+            }
+            if((msg->x) != BN_STATUS_NOHIT)
+            {
+                game->isTurn = 1;
+            }
         }
-        else 
+        if((game->isTurn) == 0)
         {
             read(sd, (void*)(msg)  , sizeof(msg_pack));
             BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
             if((msg->type)== BN_MSGTYPE_GAMEENDED){
                 game->isRunning = 0;
+            }
+            else if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP)) {
+                game->isTurn = 0;
             }
         }
     }
