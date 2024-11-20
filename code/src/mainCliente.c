@@ -11,6 +11,8 @@
 #define PORT 8000
 #define IP_SERVER "127.0.0.1"
 
+//FREE DE LAS VARIABLES board_self despues de que se termine el juego
+
 int main(){
 
     int cliente_fd = conectar(IP_SERVER, PORT, 1);
@@ -20,13 +22,13 @@ int main(){
         exit(EXIT_FAILURE);
     }
     
-    struct Game* game = malloc(sizeof(struct Game));
+    struct Game* game = (Game*)malloc(sizeof(struct Game));
 
     initializeWindow(game);
     
 
     
-    struct BN_Board* board_self = malloc(2*sizeof(BN_Board*));
+    struct BN_Board* board_self = (BN_Board*)malloc(2*sizeof(BN_Board*));
     struct BN_Board* board_ = board_self + 1;
     
     //BN_clear_board(board_);
@@ -50,7 +52,7 @@ int main(){
 
     close(cliente_fd);
 
-
+    free(board_self);
     endGame(game);
     freeGame(game);
 
