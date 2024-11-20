@@ -14,6 +14,7 @@
 #include <stdlib.h>
 //#include <stdio.h>
 
+//esto es solo para que me deje subir el commit con el make clean
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board)
 {
