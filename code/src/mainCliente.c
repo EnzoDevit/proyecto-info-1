@@ -24,8 +24,8 @@ int main(){
 
     initializeWindow(game);
     
+    game->sd = cliente_fd;
 
-    
     struct BN_Board* board_self = malloc(2*sizeof(BN_Board*));
     struct BN_Board* board_ = board_self + 1;
     

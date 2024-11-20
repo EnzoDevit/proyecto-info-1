@@ -41,6 +41,7 @@ typedef struct Game
     unsigned int isTurn:1;
     unsigned int isWon:1;
     msg_pack* msg;
+    int sd;
     pthread_mutex_t msgmutex;
 } Game;
 

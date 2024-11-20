@@ -1,6 +1,5 @@
 #include "client_funcs.h"
-
-#include <stdio.h>
+//#include <stdio.h>
 #include <unistd.h>
 
 
@@ -24,7 +23,7 @@ void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned c
 // Hay que reservar previamente los componentes de data
 void* clientLoop(void* data)
 {
-    printf("comienza"); fflush(stdout);
+    //printf("comienza"); fflush(stdout);
     int sd = ((client_data*)data)->sock_descriptor;
     Game* game = ((client_data*)data)->game;
 
@@ -40,20 +39,29 @@ void* clientLoop(void* data)
     char running = 1;
 
     read(sd, (void*)(boards), sizeof(BN_Board));
-    printf("llega"); fflush(stdout);
-    read((sd), (void*)(&msg), sizeof(msg_pack));
-    printf("%d, %d, %d\n", msg->type, msg->x, msg->y);fflush(stdout);
+//    printf("llega"); fflush(stdout);
+    read((sd), (void*)(msg), sizeof(msg_pack));
+//    printf("tipo: %d, x: %d, y: %d\n", msg->type, msg->x, msg->y);fflush(stdout);
     
     if((msg->type) == BN_MSGTYPE_ACTION) 
     {
         BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
+    
+        if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP))
+        {
+            game->isTurn = 1;
+            //printf("Pifia"); fflush(stdout);
+        }
+        else 
+        {
+            //printf("Acierta"); fflush(stdout);
+        }
     }
-
-    // if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP))
-    // {
+    else 
+    {
         game->isTurn = 1;
-    // }
-
+        //printf("Inicio"); fflush(stdout);
+    }
     while (game->isRunning) {
 
         if((game->isTurn) == 1)
@@ -86,7 +94,7 @@ void* clientLoop(void* data)
                 game->isRunning = 0;
             }
             else if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP)) {
-                game->isTurn = 0;
+                game->isTurn = 1;
             }
         }
     }

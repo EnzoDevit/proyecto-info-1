@@ -69,7 +69,6 @@ void manejar_signal(int signo){
 
 void* serverLoop(void* data)
 {
-    printf("lanzado");
     BN_Board* boards = malloc(2*sizeof(BN_Board));
     uint64_t states[] = BN_PRESAVED_STATES;
     BN_set_board(boards, 0, states[rand()%9]);
@@ -100,7 +99,9 @@ void* serverLoop(void* data)
 
     while (running) {
 
+        //printf("turn:%d\n", turn);
         read(*(sd + turn),  (void*)(msg), sizeof(msg_pack));
+        //printf("in: %hhx\n", *(char*)&msg);
 
         if(msg->type != BN_MSGTYPE_ACTION) break;
         
@@ -114,18 +115,20 @@ void* serverLoop(void* data)
             msg_s->type = BN_MSGTYPE_GAMEENDED;
             msg->type = BN_MSGTYPE_GAMEENDED;
         }
+        //printf("outp: %hhx\n", *(char*)&msg_s);
+        //printf("outa: %hhx\n", *(char*)&msg);
         
         write(*(sd + turn),           (void*)(msg_s), sizeof(msg_pack));
         write(*(sd + ((turn + 1)%2)), (void*)(msg)  , sizeof(msg_pack));
 
-        if((msg_s->x) != BN_STATUS_NOHIT)
+        if((msg_s->x) == BN_STATUS_NOHIT)
         {
             turn = (turn + 1)%2;
         }
     }
 
     close(*sd);
-    free(boards);
+    //free(boards);
 
 
     return NULL;
