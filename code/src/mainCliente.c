@@ -1,6 +1,8 @@
 #include "BN.h"
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <unistd.h>
 #include "sock-lib.h"
 #include "sdl_funcs.h"
@@ -46,8 +48,12 @@ int main(){
         render(game, board_, board_self);
     }
 
+    close(cliente_fd);
+
+
     endGame(game);
     freeGame(game);
+
 
     return 0;
 }

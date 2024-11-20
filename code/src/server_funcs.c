@@ -92,9 +92,9 @@ void* serverLoop(void* data)
     *(unsigned char*)msg = 0;
     *(unsigned char*)msg_s = 0;
 
+    msg_s->type = BN_MSGTYPE_GAMESTARTED;
 
-
-    write(*(sd), (void*)(&msg_s), sizeof(msg_pack));
+    write(*(sd), (void*)(msg_s), sizeof(msg_pack));
 
     while (running) {
 
@@ -104,7 +104,7 @@ void* serverLoop(void* data)
         
         *(unsigned char*)msg_s = 0;
         // establecemos la convencion de mandar las respuesteas en el x
-        msg_s->type = 0;
+        msg_s->type = BN_MSGTYPE_ACTION;
         msg_s->x = BN_answerShot(boards + ((turn + 1)%2),msg->x,msg->y);
         
         if( msg_s->x== BN_STATUS_GAMEWON) 

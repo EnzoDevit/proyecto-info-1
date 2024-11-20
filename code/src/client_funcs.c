@@ -24,7 +24,7 @@ void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned c
 // Hay que reservar previamente los componentes de data
 void* clientLoop(void* data)
 {
-    printf("comienza");
+    printf("comienza"); fflush(stdout);
     int sd = ((client_data*)data)->sock_descriptor;
     Game* game = ((client_data*)data)->game;
 
@@ -40,15 +40,16 @@ void* clientLoop(void* data)
     char running = 1;
 
     read(sd, (void*)(boards), sizeof(BN_Board));
-    printf("llega");
+    printf("llega"); fflush(stdout);
     read((sd), (void*)(&msg), sizeof(msg_pack));
-    printf("%d, %d, %d\n", msg->type, msg->x, msg->y);
-    if(msg->type == BN_MSGTYPE_ACTION) 
+    printf("%d, %d, %d\n", msg->type, msg->x, msg->y);fflush(stdout);
+    
+    if((msg->type) == BN_MSGTYPE_ACTION) 
     {
         BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
     }
 
-    while (running) {
+    while (game->isRunning) {
 
         game->isTurn = 1;
 
@@ -64,17 +65,20 @@ void* clientLoop(void* data)
         
         if(msg->type == BN_MSGTYPE_GAMEENDED)
         {
-            running = 0;
+            game->isRunning = 0;
             game->isWon = 1;
         }
         else 
         {
             read(sd, (void*)(msg)  , sizeof(msg_pack));
             BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
-            if(msg->type == BN_MSGTYPE_GAMEENDED){
-                running = 0;
+            if((msg->type)== BN_MSGTYPE_GAMEENDED){
+                game->isRunning = 0;
             }
         }
     }
+
+    
+
     return 0;
 }
