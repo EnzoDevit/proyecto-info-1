@@ -62,7 +62,6 @@ int main(){
                 nuevo_cliente_fd = 0;
                 nuevo_cliente_fd_2 = 0;
             }
-
         }
     }
 }
