@@ -45,6 +45,11 @@ typedef struct Game
     pthread_mutex_t msgmutex;
 } Game;
 
+typedef struct Node {
+    SDL_Rect rect;
+    struct Node* next;
+} Node;
+
 int initializeWindow(struct Game*);
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board);

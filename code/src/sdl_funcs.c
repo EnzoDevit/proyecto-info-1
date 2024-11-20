@@ -29,7 +29,7 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
         ((event.motion.y%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)
     )
     {
-        switch (event.button.button) 
+        switch (event.button.button)
         {
         case 1:
             if(!BN_getpos(board, rx, ry, BN_TYPE_SHOT))

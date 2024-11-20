@@ -3,16 +3,18 @@
 #include "sdl_funcs.h"
 #include "BN.h"
 
+//VARIABLES: game, board_, board_self. CASTEADAS DESPUES DEL MALLOC Y FREE APLICADO DESPUES DE QUE SE TERMINA EL JUEGO(DESPUES DEL WHILE)
+
 int main()
 {
-    struct Game* game = malloc(sizeof(struct Game));
+    struct Game* game = (Game*)malloc(sizeof(struct Game)); //casteo agregado
 
     initializeWindow(game);
     
 
     
-    struct BN_Board* board_ = malloc(sizeof(*board_));
-    struct BN_Board* board_self = malloc(sizeof(*board_self));
+    struct BN_Board* board_ = (BN_Board*)malloc(sizeof(*board_)); //casteo agregado
+    struct BN_Board* board_self = (BN_Board*)malloc(sizeof(*board_self)); //casteo agregado
     
     //BN_clear_board(board_);
 
@@ -28,6 +30,10 @@ int main()
         render(game, board_, board_self);
     }
 
+
+    free(game);
+    free(board_);
+    free(board_self);
     endGame(game);
     freeGame(game);
 

@@ -12,6 +12,9 @@
 // 3: izquierda
 // 4: derecha
 
+
+//probar free's del final para malloceo de variables
+
 int BN_checkship(struct BN_Board * board, unsigned char xpos, unsigned char ypos, unsigned char dir)
 {
     int retval = 1;
@@ -127,9 +130,9 @@ void* serverLoop(void* data)
         }
     }
 
-    close(*sd);
-    //free(boards);
-
-
+    free(data); //libera sumaclientes de mainServer.c
+    free(msg); //probar
+    free(msg_s);//probar
+    free(boards);//probar
     return NULL;
 }

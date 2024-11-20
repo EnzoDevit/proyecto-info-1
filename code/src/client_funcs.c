@@ -2,6 +2,8 @@
 //#include <stdio.h>
 #include <unistd.h>
 
+//MALLOCEO DE LA VARIABLE msg Y DESPUES SE LE HACE FREE DESPUES DEL WHILE
+
 
 // Cliente ejecuta  el mensage que le devuelve el serveral disparar
 void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned char y, unsigned char statustype)
@@ -31,7 +33,7 @@ void* clientLoop(void* data)
 
     BN_clear_board(boards + 1);
 
-    msg_pack* msg = malloc(sizeof(msg_pack));// mensage a recibir
+    msg_pack* msg = (msg_pack*)malloc(sizeof(msg_pack));// mensage a recibir //malloc casteado
     *(unsigned char*)msg = 0;//pone las 3 variables en 0
     
     msg_pack* msg_s = game->msg;
@@ -98,6 +100,8 @@ void* clientLoop(void* data)
             }
         }
     }
+
+    free(msg);//free de msg, probar
 
     
 
