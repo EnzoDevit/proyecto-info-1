@@ -130,9 +130,12 @@ void* serverLoop(void* data)
         }
     }
 
+    close(*sd);
+    close(*(sd +1));
+
+
     free(data); //libera sumaclientes de mainServer.c
     free(msg); //probar
-    free(msg_s);//probar
     free(boards);//probar
     return NULL;
 }

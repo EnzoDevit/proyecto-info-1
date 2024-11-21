@@ -24,7 +24,7 @@ int main(){
     
     struct Game* game = (Game*)malloc(sizeof(struct Game));
 
-    initializeWindow(game);
+    initializeGame(game);
     
     game->sd = cliente_fd;
 
@@ -41,7 +41,7 @@ int main(){
     pthread_t hilo;
 
     pthread_create(&hilo, NULL, clientLoop, &data);
-    pthread_detach(hilo);
+    //pthread_detach(hilo);
 
     while (game->isRunning)
     {
@@ -50,10 +50,18 @@ int main(){
         render(game, board_, board_self);
     }
 
+    if(!(game->threadEnded))
+    {
+        //pthread_kill(hilo, SIGTERM);
+        pthread_join(hilo, NULL);
+    }
+
     close(cliente_fd);
 
-    free(board_self);
+    
     endGame(game);
+    
+    free(board_self);
     freeGame(game);
 
 

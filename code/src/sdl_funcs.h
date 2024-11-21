@@ -37,9 +37,12 @@ typedef struct Game
 {
     SDL_Window * win;
     SDL_Renderer * renderer;
-    unsigned int isRunning:1;
-    unsigned int isTurn:1;
-    unsigned int isWon:1;
+
+    unsigned char isRunning:1;
+    unsigned char isTurn:1;
+    unsigned char isWon:1;
+    unsigned char threadEnded:1;
+
     msg_pack* msg;
     int sd;
     pthread_mutex_t msgmutex;
@@ -50,7 +53,7 @@ typedef struct Node {
     struct Node* next;
 } Node;
 
-int initializeWindow(struct Game*);
+int initializeGame(struct Game*);
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board);
 void processInput(struct Game*, struct BN_Board*, struct BN_Board* self);
