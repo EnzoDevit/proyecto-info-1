@@ -72,6 +72,12 @@ void manejar_signal(int signo){
 
 void* serverLoop(void* data)
 {
+    struct sigaction new_actn, old_actn;
+    new_actn.sa_handler = SIG_IGN;
+    sigemptyset (&new_actn.sa_mask);
+    new_actn.sa_flags = 0;
+    sigaction (SIGPIPE, &new_actn, &old_actn);
+
     BN_Board* boards = malloc(2*sizeof(BN_Board));
     uint64_t states[] = BN_PRESAVED_STATES;
     BN_set_board(boards, 0, states[rand()%9]);

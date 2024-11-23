@@ -197,10 +197,14 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
 
 void freeGame(struct Game* game)
 {
+    printf("SDL_DestroyRenderer\n"); fflush(stdout);
     SDL_DestroyRenderer(game->renderer);
+    printf("SDL_DestroyWindow\n"); fflush(stdout);
     SDL_DestroyWindow(game->win);
+    printf("SDL_Quit\n"); fflush(stdout);
     SDL_Quit(); // Cierra SDL
-    free(game);
+    printf("free(game)\n"); fflush(stdout);
+    //free(game);
 }
 
 void endGame(struct Game* game)

@@ -52,18 +52,19 @@ int main(){
 
     if(!(game->threadEnded))
     {
+        printf("llega\n"); fflush(stdout);
         //pthread_kill(hilo, SIGTERM);
         pthread_join(hilo, NULL);
     }
 
-    close(cliente_fd);
+    //close(cliente_fd);
 
     
+    printf("endGame\n"); fflush(stdout);
     endGame(game);
     
     free(board_self);
     freeGame(game);
-
 
     return 0;
 }
