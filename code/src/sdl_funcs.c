@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <linux/limits.h>
 #include <stdlib.h>
+#include <unistd.h>
 //#include <stdio.h>
 
 
@@ -40,11 +41,10 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
                 game->msg->y = ry;
                 pthread_mutex_unlock(&(game->msgmutex));
             }
-            // TO-DO enviar_disparo(rx, ry)
+            
             break;
 
         default:
-            
             break;
         }
     }
@@ -52,12 +52,13 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
     return;
 }
 
-int initializeWindow(struct Game* game)
+int initializeGame(struct Game* game)
 {
     int errcode = SDL_Init(SDL_INIT_EVERYTHING);
     game->isRunning = 1;
     game->isTurn = 0;
     game->isWon = 0;
+    game->threadEnded = 0;
     pthread_mutex_init(&(game->msgmutex), NULL);
     if(errcode == 0)
     {
@@ -97,12 +98,18 @@ void processInput(struct Game* game, struct BN_Board* board, struct BN_Board* bo
     switch (event.type) {
         case SDL_QUIT:
             game->isRunning = 0;
+            msg_pack msg = {BN_MSGTYPE_GAMEENDED, 0, 0};
+            write(game->sd, &msg, sizeof(msg));
             break;
 
         
         case SDL_KEYDOWN:
             if(event.key.keysym.sym == SDLK_q)
+            {
                 game->isRunning = 0;
+                msg_pack msg = {BN_MSGTYPE_GAMEENDED, 0, 0};
+                write(game->sd, &msg, sizeof(msg));
+            }
             else if(event.key.keysym.sym == SDLK_SPACE)
                 BN_set_board(board, 0, 0);
             else if(event.key.keysym.sym == SDLK_w)

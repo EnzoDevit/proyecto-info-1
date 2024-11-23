@@ -9,16 +9,14 @@
 
 #define DEFAULT_ERROR -1
 // BN: batalla naval
-#define BN_MARGIN_SIZE 5
-#define BN_TILE_SIZE 60
 #define BN_COLUMNS 8
 
-#define BN_BIG_MARGIN_SIZE 15
-
+#define BN_MARGIN_SIZE 5
+#define BN_TILE_SIZE 16
+#define BN_BIG_MARGIN_SIZE 10
 #define BN_SPACE_SIZE 5
-
-#define BN_DOT_SIZE 10
-#define BN_SHIP_SIZE 40
+#define BN_DOT_SIZE 4
+#define BN_SHIP_SIZE 10
 
 #define BN_DOT_MARGIN_SIZE ((BN_TILE_SIZE - BN_DOT_SIZE)/2)
 #define BN_SHIP_MARGIN_SIZE ((BN_TILE_SIZE - BN_SHIP_SIZE)/2)
@@ -39,10 +37,14 @@ typedef struct Game
 {
     SDL_Window * win;
     SDL_Renderer * renderer;
-    unsigned int isRunning:1;
-    unsigned int isTurn:1;
-    unsigned int isWon:1;
+
+    unsigned char isRunning:1;
+    unsigned char isTurn:1;
+    unsigned char isWon:1;
+    unsigned char threadEnded:1;
+
     msg_pack* msg;
+    int sd;
     pthread_mutex_t msgmutex;
 } Game;
 
@@ -51,7 +53,7 @@ typedef struct Node {
     struct Node* next;
 } Node;
 
-int initializeWindow(struct Game*);
+int initializeGame(struct Game*);
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board);
 void processInput(struct Game*, struct BN_Board*, struct BN_Board* self);
