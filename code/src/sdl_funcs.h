@@ -9,13 +9,13 @@
 // BN: batalla naval
 #define BN_COLUMNS 8
 
-#define BN_MARGIN_SIZE 5
-#define BN_TILE_SIZE 16
+#define BN_MARGIN_SIZE 6
+#define BN_TILE_SIZE 30
 #define BN_BIG_MARGIN_SIZE 10
-#define BN_SPACE_SIZE 5
-#define BN_DOT_SIZE 4
-#define BN_SHIP_SIZE 10
-#define BN_SHIP_DOWN_OFFSET_SIZE 2
+#define BN_SPACE_SIZE 8
+#define BN_DOT_SIZE 8
+#define BN_SHIP_SIZE 24
+#define BN_SHIP_DOWN_OFFSET_SIZE 4
 
 #define BN_DOT_MARGIN_SIZE ((BN_TILE_SIZE - BN_DOT_SIZE)/2)
 #define BN_SHIP_MARGIN_SIZE ((BN_TILE_SIZE - BN_SHIP_SIZE)/2)
@@ -31,6 +31,7 @@
 #define BN_YLW 255, 130, 30, 255
 #define BN_WHITE 255, 255, 255, 255
 #define BN_ORG 180, 130, 0, 255
+#define BN_FALLEN 220, 60, 0, 60
 
 typedef struct Node {
     SDL_Rect rect;

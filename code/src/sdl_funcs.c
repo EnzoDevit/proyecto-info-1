@@ -190,9 +190,9 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
         
     }
     Node* p = game->list;
-    SDL_SetRenderDrawColor(game->renderer, BN_ORG);
+    SDL_SetRenderDrawColor(game->renderer, BN_FALLEN);
     while (p) {
-        SDL_RenderDrawRect(game->renderer, &(p->rect));
+        SDL_RenderFillRect(game->renderer, &(p->rect));
         p = p->next;
     }
 
