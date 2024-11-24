@@ -3,11 +3,7 @@
 #include "sdl_funcs.h"
 #include "BN.h"
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
+
 #include <pthread.h>
 #include <stdio.h>
 #include <linux/limits.h>

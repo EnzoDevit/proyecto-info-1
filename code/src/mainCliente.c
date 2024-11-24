@@ -1,11 +1,5 @@
-#include "BN.h"
 #include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
 #include "sock-lib.h"
-#include "sdl_funcs.h"
 #include "client_funcs.h"
 
 #define PORT 8000
@@ -57,14 +51,14 @@ int main(){
         pthread_join(hilo, NULL);
     }
 
-    //close(cliente_fd);
+    close(cliente_fd);
 
     
     printf("endGame\n"); fflush(stdout);
     endGame(game);
     
-    free(board_self);
     freeGame(game);
+    free(board_self);
 
     return 0;
 }

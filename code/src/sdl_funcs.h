@@ -2,8 +2,6 @@
 #define SDL_BN_lib
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_shape.h>
-#include <SDL2/SDL_video.h>
 #include <pthread.h>
 #include "BN.h"
 
@@ -17,6 +15,7 @@
 #define BN_SPACE_SIZE 5
 #define BN_DOT_SIZE 4
 #define BN_SHIP_SIZE 10
+#define BN_SHIP_DOWN_OFFSET_SIZE 2
 
 #define BN_DOT_MARGIN_SIZE ((BN_TILE_SIZE - BN_DOT_SIZE)/2)
 #define BN_SHIP_MARGIN_SIZE ((BN_TILE_SIZE - BN_SHIP_SIZE)/2)
@@ -31,7 +30,12 @@
 #define BN_GRAY 180, 180, 180, 255
 #define BN_YLW 255, 130, 30, 255
 #define BN_WHITE 255, 255, 255, 255
+#define BN_ORG 180, 130, 0, 255
 
+typedef struct Node {
+    SDL_Rect rect;
+    struct Node* next;
+} Node;
 
 typedef struct Game
 {
@@ -47,11 +51,6 @@ typedef struct Game
     int sd;
     pthread_mutex_t msgmutex;
 } Game;
-
-typedef struct Node {
-    SDL_Rect rect;
-    struct Node* next;
-} Node;
 
 int initializeGame(struct Game*);
 

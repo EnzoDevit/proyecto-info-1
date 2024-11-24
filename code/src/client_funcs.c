@@ -1,6 +1,6 @@
 #include "client_funcs.h"
-//#include <stdio.h>
 #include <unistd.h>
+//#include <stdio.h>
 
 //MALLOCEO DE LA VARIABLE msg Y DESPUES SE LE HACE FREE DESPUES DEL WHILE
 // Cliente ejecuta  el mensage que le devuelve el serveral disparar
@@ -20,6 +20,37 @@ void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned c
     }
 }
 
+/* Una funcion para recorrer a lo largo de un barco
+ * si la vatiable is_x es !=0 entonces recorre en x, si no recorre en y
+ * Dependiendo de la direccion 1 o -1 devuelve la minimo o maxima posicion del barco
+ */
+static int shipWalk(BN_Board* board,  int x,  int y, char is_x, char dir)
+{
+    int* changed = is_x? &x:&y; // condiciono la que va a ser cambiada
+    char run_loop;
+    while (run_loop){
+        *changed += dir;
+        if (((*changed)<0)||((*changed>7)))run_loop = 0;
+        else if(!BN_getpos(board, x, y, BN_TYPE_SHIP))run_loop = 0;
+    }
+    *changed -= dir;
+    return *changed;
+}
+
+void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
+{
+    char size_x, size_y, min_x, min_y;
+    min_x = shipWalk(board, x,y,1,-1);
+    size_x = shipWalk(board, x,y,1,1) - min_x;
+    min_y = shipWalk(board, x,y,0,-1);
+    size_y = shipWalk(board, x,y,0,1) - min_y;
+    SDL_Rect ship = {BN_MARGIN_SIZE + size_x +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE),BN_MARGIN_SIZE + BN_SHIP_DOWN_OFFSET_SIZE +  y*(BN_MARGIN_SIZE + BN_TILE_SIZE), size_x*BN_TILE_SIZE - 2*BN_SHIP_DOWN_OFFSET_SIZE, size_x*BN_TILE_SIZE - 2*BN_SHIP_DOWN_OFFSET_SIZE};
+    Node* newShip = (Node*)malloc(sizeof(Node));
+    newShip->rect = ship;
+    newShip->next = *list;
+    *list = newShip;
+}
+// */
 
 // Hay que reservar previamente los componentes de data
 void* clientLoop(void* data)
