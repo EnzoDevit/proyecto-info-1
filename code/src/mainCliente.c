@@ -16,7 +16,7 @@ int main(){
         exit(EXIT_FAILURE);
     }
     
-    struct Game* game = (Game*)malloc(sizeof(struct Game));
+    Game* game = (Game*)malloc(sizeof(Game));
 
     initializeGame(game);
     
@@ -58,6 +58,7 @@ int main(){
     endGame(game);
     
     freeGame(game);
+    printf("free(board_self)\n"); fflush(stdout);
     free(board_self);
 
     return 0;

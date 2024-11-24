@@ -55,6 +55,7 @@ int initializeGame(struct Game* game)
     game->isTurn = 0;
     game->isWon = 0;
     game->threadEnded = 0;
+    game->list = (Node*)0;
     pthread_mutex_init(&(game->msgmutex), NULL);
     if(errcode == 0)
     {
@@ -188,6 +189,13 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
         }
         
     }
+    Node* p = game->list;
+    SDL_SetRenderDrawColor(game->renderer, BN_ORG);
+    while (p) {
+        SDL_RenderDrawRect(game->renderer, &(p->rect));
+        p = p->next;
+    }
+
     SDL_RenderPresent(game->renderer);
 }
 

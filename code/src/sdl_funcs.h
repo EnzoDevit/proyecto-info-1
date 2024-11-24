@@ -41,7 +41,6 @@ typedef struct Game
 {
     SDL_Window * win;
     SDL_Renderer * renderer;
-
     unsigned char isRunning:1;
     unsigned char isTurn:1;
     unsigned char isWon:1;
@@ -50,6 +49,9 @@ typedef struct Game
     msg_pack* msg;
     int sd;
     pthread_mutex_t msgmutex;
+
+
+    struct Node* list; // Por algun motivo crashea cuando lo pongo mas arriba!?!?!?
 } Game;
 
 int initializeGame(struct Game*);

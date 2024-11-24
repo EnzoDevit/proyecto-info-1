@@ -1,4 +1,5 @@
 #include "client_funcs.h"
+#include "sdl_funcs.h"
 #include <unistd.h>
 //#include <stdio.h>
 
@@ -27,7 +28,7 @@ void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned c
 static int shipWalk(BN_Board* board,  int x,  int y, char is_x, char dir)
 {
     int* changed = is_x? &x:&y; // condiciono la que va a ser cambiada
-    char run_loop;
+    char run_loop = 1;
     while (run_loop){
         *changed += dir;
         if (((*changed)<0)||((*changed>7)))run_loop = 0;
@@ -41,10 +42,16 @@ void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
 {
     char size_x, size_y, min_x, min_y;
     min_x = shipWalk(board, x,y,1,-1);
-    size_x = shipWalk(board, x,y,1,1) - min_x;
+    size_x = shipWalk(board, x,y,1,1) - min_x + 1;
     min_y = shipWalk(board, x,y,0,-1);
-    size_y = shipWalk(board, x,y,0,1) - min_y;
-    SDL_Rect ship = {BN_MARGIN_SIZE + size_x +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE),BN_MARGIN_SIZE + BN_SHIP_DOWN_OFFSET_SIZE +  y*(BN_MARGIN_SIZE + BN_TILE_SIZE), size_x*BN_TILE_SIZE - 2*BN_SHIP_DOWN_OFFSET_SIZE, size_x*BN_TILE_SIZE - 2*BN_SHIP_DOWN_OFFSET_SIZE};
+    size_y = shipWalk(board, x,y,0,1) - min_y + 1;
+    SDL_Rect ship = {
+        BN_SHIP_DOWN_OFFSET_SIZE + min_x*(BN_MARGIN_SIZE + BN_TILE_SIZE),
+        BN_SHIP_DOWN_OFFSET_SIZE + min_y*(BN_MARGIN_SIZE + BN_TILE_SIZE),
+        size_x*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE, 
+        size_y*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE
+    };
+    printf("%d, %d, %d, %d\n", min_x, size_x, min_y, size_y);
     Node* newShip = (Node*)malloc(sizeof(Node));
     newShip->rect = ship;
     newShip->next = *list;
@@ -128,6 +135,10 @@ void* clientLoop(void* data)
             if((msg->x) != BN_STATUS_NOHIT)
             {
                 game->isTurn = 1;
+                if((msg->x) == BN_STATUS_SHIPDOWN)
+                {
+                    BN_getShip(boards + 1, &(game->list), msg_s->x, msg_s->y);
+                }
             }
         }
         if((game->isTurn) == 0)
