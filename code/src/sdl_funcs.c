@@ -1,16 +1,4 @@
-//#include "server_funcs.h"
-#include "client_funcs.h"
 #include "sdl_funcs.h"
-#include "BN.h"
-#include <SDL2/SDL.h>
-
-#include <pthread.h>
-#include <stdio.h>
-#include <linux/limits.h>
-#include <stdlib.h>
-#include <unistd.h>
-//#include <stdio.h>
-
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board)
 {
@@ -44,7 +32,6 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
             break;
         }
     }
-    
     return;
 }
 

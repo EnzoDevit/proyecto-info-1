@@ -1,11 +1,11 @@
 #include "client_funcs.h"
-#include "sdl_funcs.h"
-#include <unistd.h>
-//#include <stdio.h>
 
 //MALLOCEO DE LA VARIABLE msg Y DESPUES SE LE HACE FREE DESPUES DEL WHILE
 // Cliente ejecuta  el mensage que le devuelve el serveral disparar
 
+/* 
+ * Funcion que maneja la respuesta del servidor en el cliente
+ */
 void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned char y, unsigned char statustype)
 {
     BN_setpos(board, x, y, BN_TYPE_SHOT, 1);
@@ -38,6 +38,8 @@ static int shipWalk(BN_Board* board,  int x,  int y, char is_x, char dir)
     return *changed;
 }
 
+
+// Agrega a la lista de barcos el barco que pasa por la casilla (x;y)
 void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
 {
     char size_x, size_y, min_x, min_y;
@@ -51,7 +53,6 @@ void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
         size_x*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE, 
         size_y*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE
     };
-    printf("%d, %d, %d, %d\n", min_x, size_x, min_y, size_y);
     Node* newShip = (Node*)malloc(sizeof(Node));
     newShip->rect = ship;
     newShip->next = *list;
@@ -71,9 +72,7 @@ void* clientLoop(void* data)
     BN_clear_board(boards + 1);
 
     msg_pack msg__ = {0,0,0};
-
     msg_pack* msg = &msg__;// mensage a recibir //malloc casteado
-    
     msg_pack* msg_s = game->msg;
     
     char running = 1;
@@ -90,34 +89,27 @@ void* clientLoop(void* data)
         if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP))
         {
             game->isTurn = 1;
-            //printf("Pifia"); fflush(stdout);
-        }
-        else 
-        {
-            //printf("Acierta"); fflush(stdout);
         }
     }
     else 
     {
         game->isTurn = 1;
-        //printf("Inicio"); fflush(stdout);
     }
     while (game->isRunning) {
 
         if((game->isTurn) == 1)
         {
+            // isTurn se pone en 0 cuando se toca una casilla durante el turno
             while (game->isTurn)
             {
                 if((game->isRunning)==0) 
                 {
-                    //msg_s->type = BN_MSGTYPE_GAMEENDED;
-                    //pthread_mutex_lock(&(game->msgmutex));
-                    //write(sd,  (void*)(msg_s), sizeof(msg_pack));
-                    //pthread_mutex_unlock(&(game->msgmutex));
                     break;
                 }
             }
             
+            // bloquea el mutex para escribir el mensage que 
+            // es modificado en la parte de SDL
             pthread_mutex_lock(&(game->msgmutex));
             write(sd,  (void*)(msg_s), sizeof(msg_pack));
             pthread_mutex_unlock(&(game->msgmutex));

@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL.h>
 #include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "BN.h"
 
 #define DEFAULT_ERROR -1
@@ -33,6 +35,7 @@
 #define BN_ORG 180, 130, 0, 255
 #define BN_FALLEN 220, 60, 0, 60
 
+// Struct de lista para los barcos caidos
 typedef struct Node {
     SDL_Rect rect;
     struct Node* next;
@@ -46,11 +49,9 @@ typedef struct Game
     unsigned char isTurn:1;
     unsigned char isWon:1;
     unsigned char threadEnded:1;
-
     msg_pack* msg;
     int sd;
     pthread_mutex_t msgmutex;
-
 
     struct Node* list; // Por algun motivo crashea cuando lo pongo mas arriba!?!?!?
 } Game;

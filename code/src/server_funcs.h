@@ -6,6 +6,7 @@
 #include <stdlib.h>//agregada
 #include <string.h>//agregada
 #include <unistd.h>//agregada
+#include <time.h>
 
 #define NULL_I (0)
 

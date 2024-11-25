@@ -1,11 +1,4 @@
-#include "BN.h"
-#include <inttypes.h>
 #include "server_funcs.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include <SDL2/SDL_stdinc.h>
 
 // 1: arriba
 // 2: abajo

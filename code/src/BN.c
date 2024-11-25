@@ -1,5 +1,4 @@
 #include "BN.h"
-#include <SDL2/SDL_mouse.h>
 #include <stdio.h>
 
 char BN_getpos(struct BN_Board* b_, unsigned char x, unsigned char y, unsigned char type)
@@ -56,17 +55,17 @@ void BN_clear_board(struct BN_Board* b_)
 {
     if (b_)
     {
-        Uint64* ptr = ((Uint64*)b_);//estoy guardando el puntero b en ptr y modifico con eso b (ptr es un puntero a int de 8bytes y shot y ship en b_ estan declarados como array de 8 chars entonces es la misma cantidad de memoria)
+        uint64_t* ptr = ((uint64_t*)b_);//estoy guardando el puntero b en ptr y modifico con eso b (ptr es un puntero a int de 8bytes y shot y ship en b_ estan declarados como array de 8 chars entonces es la misma cantidad de memoria)
         *ptr = 0; //ptr esta apuntando (por como esta guardado) a shot y lo limpia
         *(ptr+1) = 0; //ptr se incrementa, y por ser de 8bytes pasa de shot a ship y lo limpia(a ship)
     }
 }
 
-void BN_set_board(struct BN_Board* b_, Uint64 shot_, Uint64 ship_)//shot y ship se mandan en hexa o decimal y se guardan en el array de 8 bytes
+void BN_set_board(struct BN_Board* b_, uint64_t shot_, uint64_t ship_)//shot y ship se mandan en hexa o decimal y se guardan en el array de 8 bytes
 {
     if (b_)
     {
-        Uint64* ptr = ((Uint64*)b_);//lo mismo que clear pero guarda lo que le pasas de shot y ship en los atributos de la variable b_
+        uint64_t* ptr = ((uint64_t*)b_);//lo mismo que clear pero guarda lo que le pasas de shot y ship en los atributos de la variable b_
         *ptr = shot_;
         *(ptr+1) = ship_;
     }
@@ -76,7 +75,7 @@ void BN_print_board(struct BN_Board* b_)
 {
     if (b_)
     {
-        Uint64* ptr = ((Uint64*)b_);
+        uint64_t* ptr = ((uint64_t*)b_);
         printf("%lx\n", *(ptr+1));
     }
 }
