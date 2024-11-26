@@ -13,7 +13,6 @@ void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned c
     if(statustype != BN_STATUS_NOHIT)
     {
         BN_setpos(board, x, y, BN_TYPE_SHIP, 1);
-        // TODO al tirar un barco if (response == BN_STATUS_SHIPDOWN) {}
         if (statustype == BN_STATUS_GAMEWON)
         {
             game->isRunning = 0;
@@ -51,6 +50,7 @@ void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
     size_x = shipWalk(board, x,y,1,1) - min_x + 1;
     min_y = shipWalk(board, x,y,0,-1);
     size_y = shipWalk(board, x,y,0,1) - min_y + 1;
+
     // El rectangulo que representa el barco
     SDL_Rect ship = {
         BN_SHIP_DOWN_OFFSET_SIZE + min_x*(BN_MARGIN_SIZE + BN_TILE_SIZE), // x
@@ -59,6 +59,7 @@ void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
         size_y*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE  // h
     };
     Node* newShip = (Node*)malloc(sizeof(Node));
+
     // inserto el barco caido
     newShip->rect = ship;
     newShip->next = *list;
@@ -79,7 +80,6 @@ void* clientLoop(void* data)
     BN_clear_board(board_opp);
 
     msg_pack msg__ = {0,0,0};
-    //msg_pack*  &msg__ = &msg__;// mensage a recibir //malloc casteado
     msg_pack* msg_s = game->msg;
     
     char running = 1;
@@ -118,9 +118,11 @@ void* clientLoop(void* data)
             // bloquea el mutex para escribir el mensage que 
             // es modificado en la parte de SDL
             pthread_mutex_lock(&(game->msgmutex));
+            // Se envia el tiro
             write(sd,  (void*)(msg_s), sizeof(msg_pack));
             pthread_mutex_unlock(&(game->msgmutex));
 
+            // Respuesta al tiro del server
             read(sd, (void*)( &msg__), sizeof(msg_pack));
             
             BN_processResponse(game, board_opp, msg_s->x, msg_s->y,  msg__.x);
@@ -142,6 +144,7 @@ void* clientLoop(void* data)
         }
         if((game->isTurn) == 0)
         {
+            // Tiro del oponente
             read(sd, (void*)( &msg__)  , sizeof(msg_pack));
             BN_setpos(board,  msg__.x,  msg__.y, BN_TYPE_SHOT, 1);
             if(( msg__.type)== BN_MSGTYPE_GAMEENDED){

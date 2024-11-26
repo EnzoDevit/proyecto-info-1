@@ -6,8 +6,8 @@
 // 4: derecha
 
 
-//probar free's del final para malloceo de variables
 
+// Funcion que recorre recursivamente el barco para determinar si está caido
 int BN_checkship(struct BN_Board * board, unsigned char xpos, unsigned char ypos, unsigned char dir)
 {
     int retval = 1;
@@ -15,13 +15,23 @@ int BN_checkship(struct BN_Board * board, unsigned char xpos, unsigned char ypos
     {
         if (BN_getpos(board, xpos, ypos, BN_TYPE_SHIP))
         {
+
             if(!BN_getpos(board, xpos, ypos, BN_TYPE_SHOT)) retval = 0;
+            else if (dir == 0)
+            {
+                retval = BN_checkship(board, xpos, ypos + 1, 2);
+                if(retval) retval = BN_checkship(board, xpos, ypos - 1, 1);
+                if(retval) retval = BN_checkship(board, xpos + 1, ypos, 3);
+                if(retval) retval = BN_checkship(board, xpos - 1, ypos, 4);
+            
+            }
             else
             {
-                if(dir != 1) retval = BN_checkship(board, xpos, ypos + 1, 2);
-                if(retval) if(dir != 2) retval = BN_checkship(board, xpos, ypos - 1, 1);
-                if(retval) if(dir != 4) retval = BN_checkship(board, xpos + 1, ypos, 3);
-                if(retval) if(dir != 3) retval = BN_checkship(board, xpos - 1, ypos, 4);
+                // Sigue para el mismo lado
+                if(dir == 2) retval = BN_checkship(board, xpos, ypos + 1, 2);
+                else if(dir == 1) retval = BN_checkship(board, xpos, ypos - 1, 1);
+                else if(dir == 3) retval = BN_checkship(board, xpos + 1, ypos, 3);
+                else if(dir == 4) retval = BN_checkship(board, xpos - 1, ypos, 4);
             }
         }
     }
@@ -88,7 +98,7 @@ void* serverLoop(void* data)
 
     msg_pack* msg = malloc(sizeof(msg_pack));
     // mensage a enviar
-    msg_pack* msg_s /*= malloc(sizeof(msg_pack))*/;
+    msg_pack* msg_s;
 
     msg_pack msg_obj = {BN_MSGTYPE_GAMESTARTED, 0, 0};
 
@@ -100,11 +110,9 @@ void* serverLoop(void* data)
     write(*(sd), (void*)(msg_s), sizeof(msg_pack));
 
     while (running) {
-
-        //printf("turn:%d\n", turn);
+        
         read(*(sd + turn),  (void*)(msg), sizeof(msg_pack));
-        //printf("in: %hhx\n", *(char*)&msg);
-
+        
         if(msg->type != BN_MSGTYPE_ACTION) break;
         
         *(unsigned char*)msg_s = 0;
@@ -117,8 +125,6 @@ void* serverLoop(void* data)
             msg_s->type = BN_MSGTYPE_GAMEENDED;
             msg->type = BN_MSGTYPE_GAMEENDED;
         }
-        //printf("outp: %hhx\n", *(char*)&msg_s);
-        //printf("outa: %hhx\n", *(char*)&msg);
         
         write(*(sd + turn),           (void*)(msg_s), sizeof(msg_pack));
         write(*(sd + ((turn + 1)%2)), (void*)(msg)  , sizeof(msg_pack));

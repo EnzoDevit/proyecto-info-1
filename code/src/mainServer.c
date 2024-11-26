@@ -12,7 +12,7 @@
 int main(){
 
     srand(time(NULL));
-    int servidor_fd = abrir_conexion(PORT, 10, 1);
+    int servidor_fd = abrir_conexion(PORT, 10, 0);
 
     if (servidor_fd < 0){
         perror("Error al abrir conexión");
@@ -32,7 +32,7 @@ int main(){
 
             while((nuevo_cliente_fd) <= 0){
                 
-                nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 1);
+                nuevo_cliente_fd = aceptar_pedidos(servidor_fd, 0);
                 
                     if (nuevo_cliente_fd <= 0){
                         perror("Error al aceptar conexión del cliente 1");
@@ -41,7 +41,7 @@ int main(){
             }
 
             while(nuevo_cliente_fd_2 <= 0){
-                nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 1);
+                nuevo_cliente_fd_2 = aceptar_pedidos(servidor_fd, 0);
                 
                     if (nuevo_cliente_fd_2 <= 0){
                         perror("Error al aceptar conexión del cliente 2");

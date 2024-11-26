@@ -105,16 +105,15 @@ void processInput(struct Game* game, struct BN_Board* board, struct BN_Board* bo
     
     }
 }
-void update(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
-{
 
-}
+// Funcion de renderizado llamada cada tick
 void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
 {
+    //Rellenando la ventana de negro cada frame para limpiar lo ultimo
     SDL_SetRenderDrawColor(game->renderer, BN_BLACK); // Negro
     SDL_RenderClear(game->renderer);
     
-
+    //El espaciador entre los tableros:
     SDL_Rect spacer ={BN_WINDOW_SIZE, 0, BN_BIG_MARGIN_SIZE, BN_WINDOW_SIZE};
 
     SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
@@ -125,18 +124,22 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
     SDL_Rect ship ={0, 0, BN_SHIP_SIZE, BN_SHIP_SIZE};
     
 
-
+    // Va tile por tile dibujando el contorno y, condicionalmente los barcos y disparos
     for (int y = 0; y < BN_COLUMNS; y++)
     {
         rect.y = BN_MARGIN_SIZE +  y*(BN_MARGIN_SIZE + BN_TILE_SIZE);
         ship.y = rect.y + BN_SHIP_MARGIN_SIZE;
         dot.y = rect.y + BN_DOT_MARGIN_SIZE;
 
+        // Renderizado del tablero deloponente
+
         for (int x = 0; x < BN_COLUMNS; x++)
         {
+            // Contorno
             rect.x = BN_MARGIN_SIZE +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE);
-
             SDL_RenderDrawRect(game->renderer, &rect);
+            
+            // Barco
             if(BN_getpos(board, x, y, BN_TYPE_SHIP) == 1)
             {
                 ship.x = rect.x + BN_SHIP_MARGIN_SIZE;
@@ -144,6 +147,8 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
                 SDL_RenderFillRect(game->renderer, &ship);
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
+            
+            // Disparo
             if(BN_getpos(board, x, y, BN_TYPE_SHOT) == 1)
             {
                 dot.x = rect.x + BN_DOT_MARGIN_SIZE;
@@ -152,6 +157,8 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
         }
+
+        // Ahora lo mismo pero con el tablero propio
         
         for (int x = 0; x < BN_COLUMNS; x++)
         {
@@ -175,6 +182,8 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
         }
         
     }
+
+    // Se renderizan los barcos caidos sacados de la lista
     Node* p = game->list;
     SDL_SetRenderDrawColor(game->renderer, BN_FALLEN);
     while (p) {
@@ -182,6 +191,7 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
         p = p->next;
     }
 
+    //Se dibuja el recuadro que señalizaquien tiene el turno
     SDL_Rect frame = {BN_FRAME_OFFSET_SIZE, BN_FRAME_OFFSET_SIZE, BN_WINDOW_SIZE - 2*BN_FRAME_OFFSET_SIZE,BN_WINDOW_SIZE - 2*BN_FRAME_OFFSET_SIZE};
     if(game->isTurn)
     {
@@ -192,27 +202,24 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
         frame.x += BN_WINDOW_SIZE + BN_BIG_MARGIN_SIZE;
     }
     SDL_RenderDrawRect(game->renderer, &frame);
+    
+    // Se presenta todo lo dibujado al buffer de la pantalla
     SDL_RenderPresent(game->renderer);
 }
 
+
+// Se encargade liberar primero las cosas del SDL y luego el espacio de game
 void freeGame(struct Game* game)
 {
     if(game->renderer)
-    {
-        printf("SDL_DestroyRenderer\n"); fflush(stdout);
         SDL_DestroyRenderer(game->renderer);
-    }
     if(game->win)
-    {
-        printf("SDL_DestroyWindow\n"); fflush(stdout);
         SDL_DestroyWindow(game->win);
-    }
-    printf("SDL_Quit\n"); fflush(stdout);
     SDL_Quit(); // Cierra SDL
 
-    printf("free(game)\n"); fflush(stdout);
     free(game);
 }
+
 
 void endGame(struct Game* game)
 {
