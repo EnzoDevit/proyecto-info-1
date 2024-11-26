@@ -19,8 +19,8 @@ int main(){
         
         game->sd = cliente_fd;
 
-        struct BN_Board* board_self = (BN_Board*)malloc(2*sizeof(BN_Board*));
-        struct BN_Board* board_ = board_self + 1;
+        struct BN_Board* board_self = (BN_Board*)malloc(sizeof(BN_Board*));
+        struct BN_Board* board_ = (BN_Board*)malloc(sizeof(BN_Board*));
 
         client_data data = { cliente_fd, game,board_self , board_};
 

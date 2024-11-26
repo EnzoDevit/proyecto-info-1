@@ -67,9 +67,10 @@ void* clientLoop(void* data)
     int sd = ((client_data*)data)->sock_descriptor;
     Game* game = ((client_data*)data)->game;
 
-    BN_Board* boards = ((client_data*)data)->board1;
+    BN_Board* board = ((client_data*)data)->board1;
+    BN_Board* board_opp = ((client_data*)data)->board2;
 
-    BN_clear_board(boards + 1);
+    BN_clear_board(board_opp);
 
     msg_pack msg__ = {0,0,0};
     msg_pack* msg = &msg__;// mensage a recibir //malloc casteado
@@ -78,16 +79,16 @@ void* clientLoop(void* data)
     char running = 1;
 
 
-    read(sd, (void*)(boards), sizeof(BN_Board));
+    read(sd, (void*)(board), sizeof(BN_Board));
 //    printf("llega"); fflush(stdout);
     read((sd), (void*)(msg), sizeof(msg_pack));
 //    printf("tipo: %d, x: %d, y: %d\n", msg->type, msg->x, msg->y);fflush(stdout);
     /* */
     if((msg->type) == BN_MSGTYPE_ACTION) 
     {
-        BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
+        BN_setpos(board, msg->x, msg->y, BN_TYPE_SHOT, 1);
     
-        if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP))
+        if (!BN_getpos(board, msg->x, msg->y, BN_TYPE_SHIP))
         {
             game->isTurn = 1;
         }
@@ -117,7 +118,7 @@ void* clientLoop(void* data)
 
             read(sd, (void*)(msg), sizeof(msg_pack));
             
-            BN_processResponse(game, boards+1, msg_s->x, msg_s->y, msg->x);
+            BN_processResponse(game, board_opp, msg_s->x, msg_s->y, msg->x);
             
             if(msg->type == BN_MSGTYPE_GAMEENDED)
             {
@@ -130,18 +131,18 @@ void* clientLoop(void* data)
                 game->isTurn = 1;
                 if((msg->x) == BN_STATUS_SHIPDOWN)
                 {
-                    BN_getShip(boards + 1, &(game->list), msg_s->x, msg_s->y);
+                    BN_getShip(board_opp, &(game->list), msg_s->x, msg_s->y);
                 }
             }
         }
         if((game->isTurn) == 0)
         {
             read(sd, (void*)(msg)  , sizeof(msg_pack));
-            BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
+            BN_setpos(board, msg->x, msg->y, BN_TYPE_SHOT, 1);
             if((msg->type)== BN_MSGTYPE_GAMEENDED){
                 game->isRunning = 0;
             }
-            else if (!BN_getpos(boards, msg->x, msg->y, BN_TYPE_SHIP)) {
+            else if (!BN_getpos(board, msg->x, msg->y, BN_TYPE_SHIP)) {
                 game->isTurn = 1;
             }
         }
