@@ -18,6 +18,7 @@
 #define BN_DOT_SIZE 8
 #define BN_SHIP_SIZE 24
 #define BN_SHIP_DOWN_OFFSET_SIZE 4
+#define BN_FRAME_OFFSET_SIZE 3
 
 #define BN_DOT_MARGIN_SIZE ((BN_TILE_SIZE - BN_DOT_SIZE)/2)
 #define BN_SHIP_MARGIN_SIZE ((BN_TILE_SIZE - BN_SHIP_SIZE)/2)
@@ -53,11 +54,6 @@ typedef struct Game
     int sd;
     pthread_mutex_t msgmutex;
 
-/*
-    int sock_descriptor;
-    BN_Board* board1;
-    BN_Board* board2;
-*/
     struct Node* list; // Por algun motivo crashea cuando lo pongo mas arriba!?!?!?
 } Game;
 

@@ -5,6 +5,7 @@
 
 /* 
  * Funcion que maneja la respuesta del servidor en el cliente
+ * Funcion meramente de logica
  */
 void BN_processResponse(Game* game, BN_Board* board, unsigned char x, unsigned char y, unsigned char statustype)
 {
@@ -43,17 +44,22 @@ static int shipWalk(BN_Board* board,  int x,  int y, char is_x, char dir)
 void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
 {
     char size_x, size_y, min_x, min_y;
+    // Camina el barco hasta la izquierda para encontrar el menor
     min_x = shipWalk(board, x,y,1,-1);
+    // Camina hasta la derecha hasta encontrar el maximo, se resta
+    // y como se le resta el absoluto, se le sumala casilla 0
     size_x = shipWalk(board, x,y,1,1) - min_x + 1;
     min_y = shipWalk(board, x,y,0,-1);
     size_y = shipWalk(board, x,y,0,1) - min_y + 1;
+    // El rectangulo que representa el barco
     SDL_Rect ship = {
-        BN_SHIP_DOWN_OFFSET_SIZE + min_x*(BN_MARGIN_SIZE + BN_TILE_SIZE),
-        BN_SHIP_DOWN_OFFSET_SIZE + min_y*(BN_MARGIN_SIZE + BN_TILE_SIZE),
-        size_x*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE, 
-        size_y*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE
+        BN_SHIP_DOWN_OFFSET_SIZE + min_x*(BN_MARGIN_SIZE + BN_TILE_SIZE), // x
+        BN_SHIP_DOWN_OFFSET_SIZE + min_y*(BN_MARGIN_SIZE + BN_TILE_SIZE), // y
+        size_x*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE, // w
+        size_y*(BN_TILE_SIZE + BN_MARGIN_SIZE) - 2*BN_SHIP_DOWN_OFFSET_SIZE + BN_MARGIN_SIZE  // h
     };
     Node* newShip = (Node*)malloc(sizeof(Node));
+    // inserto el barco caido
     newShip->rect = ship;
     newShip->next = *list;
     *list = newShip;
@@ -61,9 +67,9 @@ void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
 // */
 
 // Hay que reservar previamente los componentes de data
+// Es el loop que se llama desde mainCliente como thread
 void* clientLoop(void* data)
 {
-    //printf("comienza"); fflush(stdout);
     int sd = ((client_data*)data)->sock_descriptor;
     Game* game = ((client_data*)data)->game;
 
@@ -73,22 +79,21 @@ void* clientLoop(void* data)
     BN_clear_board(board_opp);
 
     msg_pack msg__ = {0,0,0};
-    msg_pack* msg = &msg__;// mensage a recibir //malloc casteado
+    //msg_pack*  &msg__ = &msg__;// mensage a recibir //malloc casteado
     msg_pack* msg_s = game->msg;
     
     char running = 1;
 
 
+
     read(sd, (void*)(board), sizeof(BN_Board));
-//    printf("llega"); fflush(stdout);
-    read((sd), (void*)(msg), sizeof(msg_pack));
-//    printf("tipo: %d, x: %d, y: %d\n", msg->type, msg->x, msg->y);fflush(stdout);
-    /* */
-    if((msg->type) == BN_MSGTYPE_ACTION) 
+    read((sd), (void*)( &msg__), sizeof(msg_pack));
+
+    if(( msg__.type) == BN_MSGTYPE_ACTION) 
     {
-        BN_setpos(board, msg->x, msg->y, BN_TYPE_SHOT, 1);
+        BN_setpos(board,  msg__.x,  msg__.y, BN_TYPE_SHOT, 1);
     
-        if (!BN_getpos(board, msg->x, msg->y, BN_TYPE_SHIP))
+        if (!BN_getpos(board,  msg__.x,  msg__.y, BN_TYPE_SHIP))
         {
             game->isTurn = 1;
         }
@@ -116,20 +121,20 @@ void* clientLoop(void* data)
             write(sd,  (void*)(msg_s), sizeof(msg_pack));
             pthread_mutex_unlock(&(game->msgmutex));
 
-            read(sd, (void*)(msg), sizeof(msg_pack));
+            read(sd, (void*)( &msg__), sizeof(msg_pack));
             
-            BN_processResponse(game, board_opp, msg_s->x, msg_s->y, msg->x);
+            BN_processResponse(game, board_opp, msg_s->x, msg_s->y,  msg__.x);
             
-            if(msg->type == BN_MSGTYPE_GAMEENDED)
+            if( msg__.type == BN_MSGTYPE_GAMEENDED)
             {
                 game->isTurn = 1;
                 game->isRunning = 0;
                 game->isWon = 1;
             }
-            if((msg->x) != BN_STATUS_NOHIT)
+            if(( msg__.x) != BN_STATUS_NOHIT)
             {
                 game->isTurn = 1;
-                if((msg->x) == BN_STATUS_SHIPDOWN)
+                if(( msg__.x) == BN_STATUS_SHIPDOWN)
                 {
                     BN_getShip(board_opp, &(game->list), msg_s->x, msg_s->y);
                 }
@@ -137,12 +142,12 @@ void* clientLoop(void* data)
         }
         if((game->isTurn) == 0)
         {
-            read(sd, (void*)(msg)  , sizeof(msg_pack));
-            BN_setpos(board, msg->x, msg->y, BN_TYPE_SHOT, 1);
-            if((msg->type)== BN_MSGTYPE_GAMEENDED){
+            read(sd, (void*)( &msg__)  , sizeof(msg_pack));
+            BN_setpos(board,  msg__.x,  msg__.y, BN_TYPE_SHOT, 1);
+            if(( msg__.type)== BN_MSGTYPE_GAMEENDED){
                 game->isRunning = 0;
             }
-            else if (!BN_getpos(board, msg->x, msg->y, BN_TYPE_SHIP)) {
+            else if (!BN_getpos(board,  msg__.x,  msg__.y, BN_TYPE_SHIP)) {
                 game->isTurn = 1;
             }
         }

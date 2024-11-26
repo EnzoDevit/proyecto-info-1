@@ -1,4 +1,5 @@
 #include "sdl_funcs.h"
+#include <SDL2/SDL_rect.h>
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board)
 {
@@ -181,6 +182,16 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
         p = p->next;
     }
 
+    SDL_Rect frame = {BN_FRAME_OFFSET_SIZE, BN_FRAME_OFFSET_SIZE, BN_WINDOW_SIZE - 2*BN_FRAME_OFFSET_SIZE,BN_WINDOW_SIZE - 2*BN_FRAME_OFFSET_SIZE};
+    if(game->isTurn)
+    {
+        SDL_SetRenderDrawColor(game->renderer, BN_GREEN);
+    }
+    else {
+        SDL_SetRenderDrawColor(game->renderer, BN_RED);
+        frame.x += BN_WINDOW_SIZE + BN_BIG_MARGIN_SIZE;
+    }
+    SDL_RenderDrawRect(game->renderer, &frame);
     SDL_RenderPresent(game->renderer);
 }
 
