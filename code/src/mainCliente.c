@@ -21,17 +21,12 @@ int main(){
 
         struct BN_Board* board_self = (BN_Board*)malloc(2*sizeof(BN_Board*));
         struct BN_Board* board_ = board_self + 1;
-        
-        //BN_clear_board(board_);
-
-        //BN_change_row(board_, 3, 0b00111000, BN_TYPE_SHIP);
 
         client_data data = { cliente_fd, game,board_self , board_};
 
         pthread_t hilo;
-
+        /* */
         pthread_create(&hilo, NULL, clientLoop, &data);
-        //pthread_detach(hilo);
 
         while (game->isRunning) {
             processInput(game, board_, board_self);
@@ -41,10 +36,9 @@ int main(){
 
         if(!(game->threadEnded)) {
             printf("llega\n"); fflush(stdout);
-            //pthread_kill(hilo, SIGTERM);
             pthread_join(hilo, NULL);
         }
-
+        // */
         close(cliente_fd);
 
         printf("endGame\n"); fflush(stdout);

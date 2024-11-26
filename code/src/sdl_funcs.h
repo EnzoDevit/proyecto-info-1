@@ -53,6 +53,11 @@ typedef struct Game
     int sd;
     pthread_mutex_t msgmutex;
 
+/*
+    int sock_descriptor;
+    BN_Board* board1;
+    BN_Board* board2;
+*/
     struct Node* list; // Por algun motivo crashea cuando lo pongo mas arriba!?!?!?
 } Game;
 

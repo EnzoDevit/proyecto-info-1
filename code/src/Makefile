@@ -1,13 +1,8 @@
 libs = BN.o client_funcs.o sdl_funcs.o server_funcs.o sock-lib.o
-
 main = $(libs) main.o
-
 server =  $(libs) mainServer.o 
-
 cliente = $(libs) mainCliente.o 
-
 Cflags = -Wall -lSDL2 -lpthread
-
 CC = gcc
 
 all: server cliente

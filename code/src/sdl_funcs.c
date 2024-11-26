@@ -94,8 +94,6 @@ void processInput(struct Game* game, struct BN_Board* board, struct BN_Board* bo
                 msg_pack msg = {BN_MSGTYPE_GAMEENDED, 0, 0};
                 write(game->sd, &msg, sizeof(msg));
             }
-            else if(event.key.keysym.sym == SDLK_SPACE)
-                BN_set_board(board, 0, 0);
             else if(event.key.keysym.sym == SDLK_w)
                 BN_print_board(board);
             break;
@@ -188,14 +186,21 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
 
 void freeGame(struct Game* game)
 {
-    printf("SDL_DestroyRenderer\n"); fflush(stdout);
-    SDL_DestroyRenderer(game->renderer);
-    printf("SDL_DestroyWindow\n"); fflush(stdout);
-    SDL_DestroyWindow(game->win);
+    if(game->renderer)
+    {
+        printf("SDL_DestroyRenderer\n"); fflush(stdout);
+        SDL_DestroyRenderer(game->renderer);
+    }
+    if(game->win)
+    {
+        printf("SDL_DestroyWindow\n"); fflush(stdout);
+        SDL_DestroyWindow(game->win);
+    }
     printf("SDL_Quit\n"); fflush(stdout);
     SDL_Quit(); // Cierra SDL
+
     printf("free(game)\n"); fflush(stdout);
-    //free(game);
+    free(game);
 }
 
 void endGame(struct Game* game)

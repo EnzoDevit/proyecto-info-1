@@ -77,11 +77,12 @@ void* clientLoop(void* data)
     
     char running = 1;
 
+
     read(sd, (void*)(boards), sizeof(BN_Board));
 //    printf("llega"); fflush(stdout);
     read((sd), (void*)(msg), sizeof(msg_pack));
 //    printf("tipo: %d, x: %d, y: %d\n", msg->type, msg->x, msg->y);fflush(stdout);
-    
+    /* */
     if((msg->type) == BN_MSGTYPE_ACTION) 
     {
         BN_setpos(boards, msg->x, msg->y, BN_TYPE_SHOT, 1);
@@ -145,9 +146,9 @@ void* clientLoop(void* data)
             }
         }
     }
-    
+    // */
     game->isTurn = 0;
     game->threadEnded = 1;
-
+    
     return 0;
 }
