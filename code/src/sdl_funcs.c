@@ -1,39 +1,26 @@
-//#include "server_funcs.h"
-#include "client_funcs.h"
 #include "sdl_funcs.h"
-#include "BN.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
-#include <pthread.h>
-#include <stdio.h>
-#include <linux/limits.h>
-#include <stdlib.h>
-#include <unistd.h>
-//#include <stdio.h>
-
 
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board)
 {
     int rx, ry; // rounded x rounded y
+    // Se aprovecha el redondeo de división entre enteros
+    // para consegui lascoordenadas en casillas
     rx = event.motion.x / (BN_TILE_SIZE + BN_MARGIN_SIZE);
     ry = event.motion.y / (BN_TILE_SIZE + BN_MARGIN_SIZE);
 
-    if(
-        (rx < BN_COLUMNS)&&
-        (ry < BN_COLUMNS)&&
-        ((event.motion.x%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)&&
-        ((event.motion.y%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)
-    )
+    if (event.button.button== 1)
     {
-        switch (event.button.button)
+        if( (rx < BN_COLUMNS)&&
+            (ry < BN_COLUMNS)&& // N° de columnas = N° de filas
+            // Si el mouse está dentro del cuadrado de la casilla
+            ((event.motion.x%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)&&
+            ((event.motion.y%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE))
         {
-        case 1:
             if(!BN_getpos(board, rx, ry, BN_TYPE_SHOT))
             {
+                // Se escribe el mensaje a enviar
+                // El mutex es para que no se acceda al mensaje mientras se edita
                 pthread_mutex_lock(&(game->msgmutex));
                 game->isTurn = 0;
                 game->msg->type = BN_MSGTYPE_ACTION;
@@ -41,14 +28,8 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
                 game->msg->y = ry;
                 pthread_mutex_unlock(&(game->msgmutex));
             }
-            
-            break;
-
-        default:
-            break;
         }
     }
-    
     return;
 }
 
@@ -59,6 +40,7 @@ int initializeGame(struct Game* game)
     game->isTurn = 0;
     game->isWon = 0;
     game->threadEnded = 0;
+    game->list = (Node*)0;
     pthread_mutex_init(&(game->msgmutex), NULL);
     if(errcode == 0)
     {
@@ -90,48 +72,39 @@ int initializeGame(struct Game* game)
     return errcode;
 }
 
+// La funcion que procesa todos los eventos, desde los clicks hasta el boton de cerrar la ventana
 void processInput(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
 {
     SDL_Event event;
     SDL_PollEvent(&event);
 
     switch (event.type) {
+        // Cerrar la ventana:
         case SDL_QUIT:
             game->isRunning = 0;
             msg_pack msg = {BN_MSGTYPE_GAMEENDED, 0, 0};
             write(game->sd, &msg, sizeof(msg));
             break;
-
         
-        case SDL_KEYDOWN:
-            if(event.key.keysym.sym == SDLK_q)
-            {
-                game->isRunning = 0;
-                msg_pack msg = {BN_MSGTYPE_GAMEENDED, 0, 0};
-                write(game->sd, &msg, sizeof(msg));
-            }
-            else if(event.key.keysym.sym == SDLK_SPACE)
-                BN_set_board(board, 0, 0);
-            else if(event.key.keysym.sym == SDLK_w)
-                BN_print_board(board);
-            break;
+        // Al hacer click
         case SDL_MOUSEBUTTONDOWN:
             if(game->isTurn)
                 handleMouseInput(game, event, board);
             break;
-    
+
+        default:
+            break;
     }
 }
-void update(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
-{
 
-}
+// Funcion de renderizado llamada cada tick
 void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
 {
+    //Rellenando la ventana de negro cada frame para limpiar lo ultimo
     SDL_SetRenderDrawColor(game->renderer, BN_BLACK); // Negro
     SDL_RenderClear(game->renderer);
     
-
+    //El espaciador entre los tableros:
     SDL_Rect spacer ={BN_WINDOW_SIZE, 0, BN_BIG_MARGIN_SIZE, BN_WINDOW_SIZE};
 
     SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
@@ -142,18 +115,22 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
     SDL_Rect ship ={0, 0, BN_SHIP_SIZE, BN_SHIP_SIZE};
     
 
-
+    // Va tile por tile dibujando el contorno y, condicionalmente los barcos y disparos
     for (int y = 0; y < BN_COLUMNS; y++)
     {
         rect.y = BN_MARGIN_SIZE +  y*(BN_MARGIN_SIZE + BN_TILE_SIZE);
         ship.y = rect.y + BN_SHIP_MARGIN_SIZE;
         dot.y = rect.y + BN_DOT_MARGIN_SIZE;
 
+        // Renderizado del tablero deloponente
+
         for (int x = 0; x < BN_COLUMNS; x++)
         {
+            // Contorno
             rect.x = BN_MARGIN_SIZE +  x*(BN_MARGIN_SIZE + BN_TILE_SIZE);
-
             SDL_RenderDrawRect(game->renderer, &rect);
+            
+            // Barco
             if(BN_getpos(board, x, y, BN_TYPE_SHIP) == 1)
             {
                 ship.x = rect.x + BN_SHIP_MARGIN_SIZE;
@@ -161,6 +138,8 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
                 SDL_RenderFillRect(game->renderer, &ship);
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
+            
+            // Disparo
             if(BN_getpos(board, x, y, BN_TYPE_SHOT) == 1)
             {
                 dot.x = rect.x + BN_DOT_MARGIN_SIZE;
@@ -169,6 +148,8 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
                 SDL_SetRenderDrawColor(game->renderer, BN_GRAY);
             }
         }
+
+        // Ahora lo mismo pero con el tablero propio
         
         for (int x = 0; x < BN_COLUMNS; x++)
         {
@@ -192,20 +173,44 @@ void render(struct Game* game, struct BN_Board* board, struct BN_Board* board_se
         }
         
     }
+
+    // Se renderizan los barcos caidos sacados de la lista
+    Node* p = game->list;
+    SDL_SetRenderDrawColor(game->renderer, BN_FALLEN);
+    while (p) {
+        SDL_RenderFillRect(game->renderer, &(p->rect));
+        p = p->next;
+    }
+
+    //Se dibuja el recuadro que señalizaquien tiene el turno
+    SDL_Rect frame = {BN_FRAME_OFFSET_SIZE, BN_FRAME_OFFSET_SIZE, BN_WINDOW_SIZE - 2*BN_FRAME_OFFSET_SIZE,BN_WINDOW_SIZE - 2*BN_FRAME_OFFSET_SIZE};
+    if(game->isTurn)
+    {
+        SDL_SetRenderDrawColor(game->renderer, BN_GREEN);
+    }
+    else {
+        SDL_SetRenderDrawColor(game->renderer, BN_RED);
+        frame.x += BN_WINDOW_SIZE + BN_BIG_MARGIN_SIZE;
+    }
+    SDL_RenderDrawRect(game->renderer, &frame);
+    
+    // Se presenta todo lo dibujado al buffer de la pantalla
     SDL_RenderPresent(game->renderer);
 }
 
+
+// Se encargade liberar primero las cosas del SDL y luego el espacio de game
 void freeGame(struct Game* game)
 {
-    printf("SDL_DestroyRenderer\n"); fflush(stdout);
-    SDL_DestroyRenderer(game->renderer);
-    printf("SDL_DestroyWindow\n"); fflush(stdout);
-    SDL_DestroyWindow(game->win);
-    printf("SDL_Quit\n"); fflush(stdout);
+    if(game->renderer)
+        SDL_DestroyRenderer(game->renderer);
+    if(game->win)
+        SDL_DestroyWindow(game->win);
     SDL_Quit(); // Cierra SDL
-    printf("free(game)\n"); fflush(stdout);
-    //free(game);
+
+    free(game);
 }
+
 
 void endGame(struct Game* game)
 {
