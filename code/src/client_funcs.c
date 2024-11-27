@@ -1,7 +1,7 @@
 #include "client_funcs.h"
 
 //MALLOCEO DE LA VARIABLE msg Y DESPUES SE LE HACE FREE DESPUES DEL WHILE
-// Cliente ejecuta  el mensage que le devuelve el serveral disparar
+// Cliente ejecuta  el mensaje que le devuelve el serveral disparar
 
 /* 
  * Funcion que maneja la respuesta del servidor en el cliente
@@ -65,34 +65,42 @@ void BN_getShip(BN_Board* board, Node** list ,unsigned int x, unsigned int y)
     newShip->next = *list;
     *list = newShip;
 }
-// */
+
 
 // Hay que reservar previamente los componentes de data
 // Es el loop que se llama desde mainCliente como thread
 void* clientLoop(void* data)
 {
+    //inicialización de las variables locales
+
     int sd = ((client_data*)data)->sock_descriptor;
     Game* game = ((client_data*)data)->game;
 
     BN_Board* board = ((client_data*)data)->board1;
     BN_Board* board_opp = ((client_data*)data)->board2;
 
+    // Limpia los tableros
+    BN_clear_board(board);
     BN_clear_board(board_opp);
 
+    // mensaje a recibir
     msg_pack msg__ = {0,0,0};
+    // mansage a enviar
     msg_pack* msg_s = game->msg;
     
     char running = 1;
 
-
-
+    // Recibe un mensaje que tiene como contenido el tablero propio
     read(sd, (void*)(board), sizeof(BN_Board));
-    read((sd), (void*)( &msg__), sizeof(msg_pack));
 
+    // Recibe un mensaje
+    read((sd), (void*)( &msg__), sizeof(msg_pack));
+    // Solo si es un tiro lo procesa
     if(( msg__.type) == BN_MSGTYPE_ACTION) 
     {
         BN_setpos(board,  msg__.x,  msg__.y, BN_TYPE_SHOT, 1);
     
+        // si el oponente no le acierta
         if (!BN_getpos(board,  msg__.x,  msg__.y, BN_TYPE_SHIP))
         {
             game->isTurn = 1;
@@ -107,15 +115,9 @@ void* clientLoop(void* data)
         if((game->isTurn) == 1)
         {
             // isTurn se pone en 0 cuando se toca una casilla durante el turno
-            while (game->isTurn)
-            {
-                if((game->isRunning)==0) 
-                {
-                    break;
-                }
-            }
+            while ((game->isTurn)&&(game->isRunning));
             
-            // bloquea el mutex para escribir el mensage que 
+            // bloquea el mutex para escribir el mensaje que 
             // es modificado en la parte de SDL
             pthread_mutex_lock(&(game->msgmutex));
             // Se envia el tiro
@@ -129,15 +131,18 @@ void* clientLoop(void* data)
             
             if( msg__.type == BN_MSGTYPE_GAMEENDED)
             {
+                // Termina el juego
                 game->isTurn = 1;
                 game->isRunning = 0;
                 game->isWon = 1;
             }
+            // Si el jugador acertó
             if(( msg__.x) != BN_STATUS_NOHIT)
             {
                 game->isTurn = 1;
                 if(( msg__.x) == BN_STATUS_SHIPDOWN)
                 {
+                    // Agrega el barco caído
                     BN_getShip(board_opp, &(game->list), msg_s->x, msg_s->y);
                 }
             }
@@ -149,13 +154,13 @@ void* clientLoop(void* data)
             BN_setpos(board,  msg__.x,  msg__.y, BN_TYPE_SHOT, 1);
             if(( msg__.type)== BN_MSGTYPE_GAMEENDED){
                 game->isRunning = 0;
-            }
+            } // si el oponente no acertó
             else if (!BN_getpos(board,  msg__.x,  msg__.y, BN_TYPE_SHIP)) {
                 game->isTurn = 1;
             }
         }
-    }
-    // */
+    } 
+
     game->isTurn = 0;
     game->threadEnded = 1;
     

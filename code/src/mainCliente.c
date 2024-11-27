@@ -7,18 +7,23 @@
 
 int main(int argc, char** argv){
     
+
     char* ip_server = IP_LOCAL;
-    
     if(argc > 1) ip_server = *(argv + 1);
 
     int cliente_fd = conectar(ip_server, PORT, 0);
 
+    //si hay algún problema con la conexión
     if (cliente_fd <= 0){
         printf("Error al conectar con el servidor");
     }
     else {
+
+        // La struct que usamos para pasar la
+        // informacion entre funciones y threads
         Game* game = (Game*)malloc(sizeof(Game));
 
+        // Si se logra inicializar
         if(initializeGame(game) == 0)
         {
             game->sd = cliente_fd;
@@ -44,6 +49,7 @@ int main(int argc, char** argv){
 
             endGame(game);
 
+            // El main es el responsable de liberar la memoria
             freeGame(game);
             free(board_self);
             free(board_);

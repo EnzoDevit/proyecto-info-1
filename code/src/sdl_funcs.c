@@ -4,21 +4,23 @@
 void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board)
 {
     int rx, ry; // rounded x rounded y
+    // Se aprovecha el redondeo de división entre enteros
+    // para consegui lascoordenadas en casillas
     rx = event.motion.x / (BN_TILE_SIZE + BN_MARGIN_SIZE);
     ry = event.motion.y / (BN_TILE_SIZE + BN_MARGIN_SIZE);
 
-    if(
-        (rx < BN_COLUMNS)&&
-        (ry < BN_COLUMNS)&&
-        ((event.motion.x%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)&&
-        ((event.motion.y%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)
-    )
+    if (event.button.button== 1)
     {
-        switch (event.button.button)
+        if( (rx < BN_COLUMNS)&&
+            (ry < BN_COLUMNS)&& // N° de columnas = N° de filas
+            // Si el mouse está dentro del cuadrado de la casilla
+            ((event.motion.x%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE)&&
+            ((event.motion.y%(BN_TILE_SIZE + BN_MARGIN_SIZE))>BN_MARGIN_SIZE))
         {
-        case 1:
             if(!BN_getpos(board, rx, ry, BN_TYPE_SHOT))
             {
+                // Se escribe el mensaje a enviar
+                // El mutex es para que no se acceda al mensaje mientras se edita
                 pthread_mutex_lock(&(game->msgmutex));
                 game->isTurn = 0;
                 game->msg->type = BN_MSGTYPE_ACTION;
@@ -26,11 +28,6 @@ void handleMouseInput(struct Game* game, SDL_Event event, struct BN_Board* board
                 game->msg->y = ry;
                 pthread_mutex_unlock(&(game->msgmutex));
             }
-            
-            break;
-
-        default:
-            break;
         }
     }
     return;
@@ -75,34 +72,28 @@ int initializeGame(struct Game* game)
     return errcode;
 }
 
+// La funcion que procesa todos los eventos, desde los clicks hasta el boton de cerrar la ventana
 void processInput(struct Game* game, struct BN_Board* board, struct BN_Board* board_self)
 {
     SDL_Event event;
     SDL_PollEvent(&event);
 
     switch (event.type) {
+        // Cerrar la ventana:
         case SDL_QUIT:
             game->isRunning = 0;
             msg_pack msg = {BN_MSGTYPE_GAMEENDED, 0, 0};
             write(game->sd, &msg, sizeof(msg));
             break;
-
         
-        case SDL_KEYDOWN:
-            if(event.key.keysym.sym == SDLK_q)
-            {
-                game->isRunning = 0;
-                msg_pack msg = {BN_MSGTYPE_GAMEENDED, 0, 0};
-                write(game->sd, &msg, sizeof(msg));
-            }
-            else if(event.key.keysym.sym == SDLK_w)
-                BN_print_board(board);
-            break;
+        // Al hacer click
         case SDL_MOUSEBUTTONDOWN:
             if(game->isTurn)
                 handleMouseInput(game, event, board);
             break;
-    
+
+        default:
+            break;
     }
 }
 
